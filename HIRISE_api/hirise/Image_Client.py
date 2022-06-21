@@ -454,11 +454,11 @@ class Image_Client:
         for img in Hiriseimg_objs:
             image_url = img.get_img_url()
 
-        with open(str(img.get_file_name()), 'wb' ) as file:
-            # get the data
-            image = requests.get(image_url)
-            file.write(image.content)
-            print('Saving file... ', img.get_file_name)
+            with open(str(img.get_file_name()), 'wb' ) as file:
+                # get the data
+                image = requests.get(image_url)
+                file.write(image.content)
+                print('Saving file... ', img.get_file_name)
 
         # Return to parent directory
         sys.path.insert(0, parent_dir_path)
