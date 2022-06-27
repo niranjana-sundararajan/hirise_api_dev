@@ -1,2 +1,2 @@
-from hirise import hirise_imgs
+from hirise import Hirise_Image
 from hirise import Image_Client
