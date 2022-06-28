@@ -1,0 +1,16 @@
+{
+    "username": "ns1321",
+    "code": "P-CJ05",
+    "title": "Deep-learning Algorithms Applied to Surface Mapping of Mars",
+    "s1": {
+        "name": "Cedric John",
+        "email": "cedric.john@imperial.ac.uk",
+        "affiliation": "Imperial College London"
+    },
+    "s2": {
+        "name": "Philippa Mason",
+        "email": "p.j.mason@imperial.ac.uk",
+        "affiliation": "Imperial College London"
+    },
+    "additional-supervisors": ""
+}

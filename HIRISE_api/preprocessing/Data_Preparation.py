@@ -56,19 +56,17 @@ class Data_Preparation:
         else:
             os.makedirs(image_directory)
             os.chdir(image_directory)
-        img_count = 0
-        for img in tqdm(img_list):
-            img_count = img_count+1
-            # im = cv2.cvtColor(np.float32(img), cv2.COLOR_RGB2BGR)
-            im = np.asarray(img)
-            for r in range(0,math.ceil(im.shape[0]),image_size_pixels):
-                for c in range(0,math.ceil(im.shape[1]),image_size_pixels):
-
-                        f_name = f"img_{img_count}_{r}_{c}.png"
-                        cv2.imwrite(str(f_name), im[r:r+image_size_pixels, c:c+image_size_pixels,:] )
-                        if remove_background:
-                            Data_Preparation.remove_background(self,file_name =f_name)
-                            
+        for img,name in zip(img_list,imgfiles):
+            try:
+                im = np.asarray(img)
+                for r in range(0,math.ceil(im.shape[0]),image_size_pixels):
+                    for c in range(0,math.ceil(im.shape[1]),image_size_pixels):
+                            f_name = name.split('\\')[1] + f"_{r}_{c}.png"
+                            cv2.imwrite(str(f_name), im[r:r+image_size_pixels, c:c+image_size_pixels,:] )
+                            if remove_background:
+                                Data_Preparation.remove_background(self,file_name =f_name)
+            except:
+                pass                
 
         sys.path.insert(0, parent_dir_path)
 
@@ -89,12 +87,15 @@ class Data_Preparation:
         for img,name in zip(im_list,imgfiles):
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             f_name = "gray_" + name.split('\\')[1]
-            cv2.imwrite(f_name, gray)
+            try:
+                cv2.imwrite(f_name, gray)
+            except:
+                pass
             if remove_background:
                 Data_Preparation.remove_background(self,file_name =f_name)
         sys.path.insert(0, parent_dir_path)
 
-    def remove_image_with_empty_pixels(self, folder_path, max_percentage_empty_space = 50):
+    def remove_image_with_empty_pixels(self, folder_path, max_percentage_empty_space = 20):
         imgfiles = glob(f"{folder_path}/*.png")
 
         if os.path.isdir(folder_path):
@@ -102,19 +103,16 @@ class Data_Preparation:
         else:
             print("ERROR!!")
 
-        for f_name in imgfiles:
-            not_empty = 0
+        for f_name in tqdm(imgfiles):
+            empty = 0
             img = Image.open(f_name.split('\\')[1])
             width, height = img.width, img.height
             total = width * height
-            lower = 0
-            higher = max_percentage_empty_space
-
             for pixel in img.getdata():
-                if pixel != (0,0,0,0):
-                    not_empty += 1
-            percent = round((not_empty * 100.0/total),1)
-            if((percent >= lower) & (percent < higher)):
+                if pixel == (0,0,0,0):
+                    empty += 1
+            percent = round((empty * 100.0/total),1)
+            if(percent >= max_percentage_empty_space):
                 os.remove(f_name.split('\\')[1])
         sys.path.insert(0, parent_dir_path)
 
@@ -149,6 +147,9 @@ class Data_Preparation:
 
             return  train_tensor, test_tensor
             
+    def get_train_val_tensors(self, dataset):
+        ...
+
     def show_training_data(self, dataset, grid_rows=5, grid_columns=5):
         """ Fugrid_columnstion that prints the traning data in a  grid"""
         # Set up axes and subplots
@@ -166,16 +167,19 @@ class Data_Preparation:
 
                 try:
                     # Exception handling - if it is PIL
-                    axarr[i][j].imshow(sample, cmap = "gray") 
+                    axarr[i][j].imshow(sample, cmap = "gray")
+                    plt.axis("off")   # turns off axes 
                 except:
                     # If tensor of shape CHW
                     axarr[i][j].imshow(sample.permute(1,2,0), cmap = "gray") 
+                    plt.axis("off")   # turns off axes
                 # Get the classes of the target data
                 target_name = dataset.dataset.targets[target]
                 # Label each image eith the target name and the class it belongs to
                 axarr[i][j].set_title("%s (%i)"%(target_name, target))
         # Deine the grid layout and padding
-        fig.tight_layout(pad=1.5)
+        
+        fig.tight_layout(pad=1)
         plt.show()
 
 
@@ -184,12 +188,12 @@ dp = Data_Preparation()
 # dp.tile_images(folder_path='./download-data',image_directory  ='./download-data/tiled-images/' , image_size_pixels = 256)
 # dp.remove_background("img_37376_15616.png")
 # dp.convert_to_grayscale(folder_path='./download-data/tiled-images',image_directory  ='./download-data/grayscale-images/')
-# dp.remove_image_with_empty_pixels(folder_path='./download-data/tiled-images')
+# dp.remove_image_with_empty_pixels(folder_path='./download-data/tiled-images/', max_percentage_empty_space = 10)
 
 transform1= transforms.Compose([transforms.ToTensor(), transforms.Grayscale(num_output_channels=1)])
 dataset1 = dp.get_image_dataset(f_path ="./download-data/", transform_data = transform1)
+# 
 
-
-# print(dataset.test_dataset[10][0])
+# # print(dataset.test_dataset[10][0])
 
 print(dp.show_training_data(dataset= dataset1))
