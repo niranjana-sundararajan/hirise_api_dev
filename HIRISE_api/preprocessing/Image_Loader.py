@@ -21,7 +21,7 @@ from torchsummary import summary
 import warnings
 warnings.filterwarnings("ignore")
 
-class Load_Hirise_Images(Dataset):
+class Hirise_Image_Dataset(Dataset):
     """Hirise Image dataset."""
     def __init__(self,
                  path_to_images,
