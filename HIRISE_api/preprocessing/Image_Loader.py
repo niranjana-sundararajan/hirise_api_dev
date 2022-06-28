@@ -4,8 +4,19 @@ import pandas as pd
 # from skimage import io, transform
 import numpy as np
 import matplotlib.pyplot as plt
-from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms, utils
+
+# Import torch packages that help us define our network
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.utils.data import TensorDataset, DataLoader, Dataset, random_split
+import torchvision.transforms as transforms
+from torchvision.transforms.transforms import Normalize
+from torchvision import datasets, transforms, models
+
+# Package that allows us to summarize our network
+from torchsummary import summary
+
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -14,13 +25,11 @@ class Load_Hirise_Images(Dataset):
     """Hirise Image dataset."""
     def __init__(self,
                  path_to_images,
-                 transform=None,
-                 train=True):
+                 transform=None):
         # ------------------------------------------------------------------------------
         # path_to_images: where you put the image dataset
         # transform:  data transform
         # img_size: resize all images to a standard size
-        # train: return training set or test set
         # ------------------------------------------------------------------------------
 
         # Load all the images and their labels
@@ -36,9 +45,15 @@ class Load_Hirise_Images(Dataset):
 
 
         # Extract the images and labels   
-        self.train_dataset, self.test_dataset = torch.utils.data.random_split(self.dataset, lengths)
+        self.train_dataset, self.test_dataset = random_split(self.dataset, lengths)
 
     def __len__(self):
-        ...
+        # Return the number of samples
+        return self.len
+
     def __getitem__(self, idx):
-        ...
+        sample = self.data[idx]
+        if self.transform:
+            sample = self.transform(sample)
+
+        return sample
