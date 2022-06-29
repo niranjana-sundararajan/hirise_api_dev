@@ -15,7 +15,6 @@ import random
 # Ignore warnings
 import warnings
 import math
-from Image_Loader import Hirise_Image_Dataset
 warnings.filterwarnings("ignore")
 
 Image.MAX_IMAGE_PIXELS = None
@@ -24,11 +23,15 @@ ImageFile.LOAD_TRUgrid_columnsATED_IMAGES = True
 if __package__ is None or __package__ == '':
     # uses current directory visibility
     from hirise import Image_Client
+    from Image_Loader import Hirise_Image_Dataset
 else:
-    from hirise import Image_Client
+    from . import Image_Loader
 # Define the current and parent directories and paths
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
+
+
+
 
 class Data_Preparation:
     """Class that allows for data prepartion as part of the preprocessing of the hirise images. """
@@ -120,11 +123,11 @@ class Data_Preparation:
         if not transform_data:
             transform_data = transforms.Compose([transforms.ToTensor()])
         # transform_data= transforms.Compose([transforms.ToTensor(), transforms.Grayscale(num_output_channels=1)])
-        dataset = Hirise_Image_Dataset(path_to_images = f_path, transform = transform_data)
+        dataset = Image_Loader.Hirise_Image_Dataset(path_to_images = f_path, transform = transform_data)
 
         return dataset
 
-    def get_train_test_val_tensors( dataset):
+    def get_train_test_val_tensors(self, dataset):
             m=len(dataset.train_dataset)
 
             train_ds, val_ds = random_split(dataset.train_dataset, [math.floor(m-m*0.2), math.ceil(m*0.2)])
@@ -164,7 +167,6 @@ class Data_Preparation:
             except :
                 pass
             return  train_tensor, test_tensor, val_tensor
-
 
     def get_train_test_val_dataloader(self, train_data, test_data, val_data,  b_size = 128):
         # Create TorchTensor Datasets containing training_data, testing_data, validation_data
@@ -223,7 +225,7 @@ dataset1 = dp.get_image_dataset(f_path ="./download-data/", transform_data = tra
 # print(dp.show_training_data(dataset= dataset1))
 # print(len(dataset1.test_dataset))
 
-tr,tst,val = Data_Preparation.get_train_test_val_tensors(dataset = dataset1)
+# tr,tst,val = Data_Preparation.get_train_test_val_tensors(dataset = dataset1)
 
 
-tr_l,tst_l, val_l = Data_Preparation.get_train_test_val_dataloader(tr,tst,val )
+# tr_l,tst_l, val_l = Data_Preparation.get_train_test_val_dataloader(train_data = tr, test_data = tst, val_data = val,  b_size = 128)

@@ -11,8 +11,10 @@ from torch import nn
 import torch.nn.functional as F
 import torch.optim as optim
 
-
-from Data_Preparation import Data_Preparation
+if __package__ is None or __package__ == '':
+    from preprocessing import Data_Preparation
+else:
+    from . import Data_Preparation
 
 class CAE_Encoder(nn.Module):
     
@@ -160,7 +162,7 @@ class Training:
         decoder.train()
         train_loss = []
         # Iterate the dataloader (we do not need the label values, this is unsupervised learning)
-        for image_batch, _ in dataloader: # with "_" we just ignore the labels (the second element of the dataloader tuple)
+        for image_batch in dataloader: # with "_" we just ignore the labels (the second element of the dataloader tuple)
             # Move tensor to the proper device
             image_batch = image_batch.to(device)
             # Encode data
@@ -193,7 +195,7 @@ class Testing:
             # Define the lists to store the outputs for each batch
             conc_out = []
             conc_label = []
-            for image_batch, _ in dataloader:
+            for image_batch in dataloader:
                 # Move tensor to the proper device
                 image_batch = image_batch.to(device)
                 # Encode data
@@ -215,11 +217,11 @@ class Testing:
 class Plot_losses:
     def plot_ae_outputs(encoder,decoder,n=10):
         plt.figure(figsize=(16,4.5))
-        targets = tst.targets.numpy()
+        targets = Train_Model.tst.targets.numpy()
         t_idx = {i:np.where(targets==i)[0][0] for i in range(n)}
         for i in range(n):
             ax = plt.subplot(2,n,i+1)
-            img = tst[t_idx[i]][0].unsqueeze(0).to(device)
+            img = Train_Model.tst[t_idx[i]][0].unsqueeze(0).to(device)
             encoder.eval()
             decoder.eval()
             with torch.no_grad():
@@ -239,20 +241,24 @@ class Plot_losses:
 
 class Latent_Space_Visualization:
     ...
+def Train_Model():
+    num_epochs = 30
+    diz_loss = {'train_loss':[],'val_loss':[]}
+    transform1= transforms.Compose([transforms.ToTensor(), transforms.Grayscale(num_output_channels=1)])
+    dp = Data_Preparation()
+    dataset1 = dp.get_image_dataset(f_path ="./download-data/", transform_data = transform1)
+    tr,tst,val = dp.get_train_test_val_tensors(dataset = dataset1)
+    train_loader,test_loader, val_l = dp.get_train_test_val_dataloader(tr,tst,val )
 
-Data_Preparation.get_image_dataset()
-num_epochs = 30
-diz_loss = {'train_loss':[],'val_loss':[]}
-transform1= transforms.Compose([transforms.ToTensor(), transforms.Grayscale(num_output_channels=1)])
-dataset1 = Data_Preparation.get_image_dataset(f_path ="./download-data/", transform_data = transform1)
-tr,tst,val = Data_Preparation.get_train_test_val_tensors(dataset = dataset1)
-train_loader,test_loader, val_l = Data_Preparation.get_train_test_val_dataloader(tr,tst,val )
+    for epoch in range(num_epochs):
+        train_loss =Training.train_epoch(encoder,decoder,device,
+        train_loader,loss_fn,optim)
+        val_loss = Testing.test_epoch(encoder,decoder,device,test_loader,loss_fn)
+        print('\n EPOCH {}/{} \t train loss {} \t val loss {}'.format(epoch + 1, num_epochs,train_loss,val_loss))
+        diz_loss['train_loss'].append(train_loss)
+        diz_loss['val_loss'].append(val_loss)
+        Plot_losses.plot_ae_outputs(encoder,decoder,n=10)
 
-for epoch in range(num_epochs):
-   train_loss =Testing.train_epoch(encoder,decoder,device,
-   train_loader,loss_fn,optim)
-   val_loss = Testing.test_epoch(encoder,decoder,device,test_loader,loss_fn)
-   print('\n EPOCH {}/{} \t train loss {} \t val loss {}'.format(epoch + 1, num_epochs,train_loss,val_loss))
-   diz_loss['train_loss'].append(train_loss)
-   diz_loss['val_loss'].append(val_loss)
-   plot_ae_outputs(encoder,decoder,n=10)
+
+
+Train_Model()
