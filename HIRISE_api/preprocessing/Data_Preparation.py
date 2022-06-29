@@ -1,7 +1,7 @@
 
 import pandas as pd
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import TensorDataset,Dataset, DataLoader,random_split
 import matplotlib.pyplot as plt
 from torchvision import datasets, transforms
 from glob import glob
@@ -124,34 +124,60 @@ class Data_Preparation:
 
         return dataset
 
-    def get_train_test_tensors(self, dataset):
+    def get_train_test_val_tensors( dataset):
+            m=len(dataset.train_dataset)
 
+            train_ds, val_ds = random_split(dataset.train_dataset, [math.floor(m-m*0.2), math.ceil(m*0.2)])
             # ------------------Training Data ----------------------------------------------
             # Empty lists to store the training data
             train_list = []
             # Append from the MedicalMNIST Object the training target and labels
-            for data in dataset.train_dataset:
-                train_list.append(data)
+            for data in train_ds:
+                train_list.append(data[0])
 
             train_tensor = torch.Tensor(len(train_list))
-            torch.cat(train_list,out = train_tensor)
-
+            try :
+                torch.cat(train_list,out = train_tensor)
+            except :
+                pass
             # ------------------- --- Test Data ---------------------------------------------
             # Empty lists to store the test data
             test_list = []
             for data in dataset.test_dataset:
-                test_list.append(data)
+                test_list.append(data[0])
 
             test_tensor = torch.Tensor(len(test_list))
-            torch.cat(test_list,out = test_tensor)
+            try:
+                torch.cat(test_list,out = test_tensor)
+            except :
+                pass
+            # ------------------- --- Val Data ---------------------------------------------
+            # Empty lists to store the test data
+            val_list = []
+            for data in val_ds:
+                val_list.append(data[0])
 
-            return  train_tensor, test_tensor
-            
-    def get_train_val_tensors(self, dataset):
-        ...
+            val_tensor = torch.Tensor(len(val_list))
+
+            try:
+                torch.cat(val_list,out = val_tensor)
+            except :
+                pass
+            return  train_tensor, test_tensor, val_tensor
+
+
+    def get_train_test_val_dataloader(self, train_data, test_data, val_data,  b_size = 128):
+        # Create TorchTensor Datasets containing training_data, testing_data, validation_data
+        training_data = TensorDataset(train_data)
+        validation_data = TensorDataset(val_data)
+        testing_data = TensorDataset(test_data)
+        train_loader = DataLoader(dataset = training_data, batch_size=b_size)
+        valid_loader = DataLoader(dataset = validation_data, batch_size=b_size)
+        test_loader = DataLoader(dataset = testing_data, batch_size=b_size,shuffle=True)
+        return train_loader,  test_loader, valid_loader
 
     def show_training_data(self, dataset, grid_rows=5, grid_columns=5):
-        """ Fugrid_columnstion that prints the traning data in a  grid"""
+        """ Prints the traning data in a grid"""
         # Set up axes and subplots
         fig, axarr = plt.subplots(grid_rows, grid_columns, figsize=(10, 10))
 
@@ -163,20 +189,18 @@ class Data_Preparation:
                 idx = random.randint(0, len(dataset.train_dataset))
 
                 # Get the sample and target fromthe traiig dataset
-                sample, target = dataset.train_dataset[idx]
+                sample = dataset.train_dataset[idx]
 
                 try:
                     # Exception handling - if it is PIL
                     axarr[i][j].imshow(sample, cmap = "gray")
-                    plt.axis("off")   # turns off axes 
                 except:
                     # If tensor of shape CHW
                     axarr[i][j].imshow(sample.permute(1,2,0), cmap = "gray") 
-                    plt.axis("off")   # turns off axes
-                # Get the classes of the target data
-                target_name = dataset.dataset.targets[target]
-                # Label each image eith the target name and the class it belongs to
-                axarr[i][j].set_title("%s (%i)"%(target_name, target))
+                # # Get the classes of the target data
+                # target_name = dataset.dataset.targets[target]
+                # # Label each image eith the target name and the class it belongs to
+                # axarr[i][j].set_title("%s (%i)"%(target_name, target))
         # Deine the grid layout and padding
         
         fig.tight_layout(pad=1)
@@ -192,8 +216,14 @@ dp = Data_Preparation()
 
 transform1= transforms.Compose([transforms.ToTensor(), transforms.Grayscale(num_output_channels=1)])
 dataset1 = dp.get_image_dataset(f_path ="./download-data/", transform_data = transform1)
-# 
+
 
 # # print(dataset.test_dataset[10][0])
 
-print(dp.show_training_data(dataset= dataset1))
+# print(dp.show_training_data(dataset= dataset1))
+# print(len(dataset1.test_dataset))
+
+tr,tst,val = Data_Preparation.get_train_test_val_tensors(dataset = dataset1)
+
+
+tr_l,tst_l, val_l = Data_Preparation.get_train_test_val_dataloader(tr,tst,val )
