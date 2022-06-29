@@ -241,12 +241,12 @@ class Plot_losses:
 
 class Latent_Space_Visualization:
     ...
-def Train_Model():
+def Train_Model(folder_path):
     num_epochs = 30
     diz_loss = {'train_loss':[],'val_loss':[]}
     transform1= transforms.Compose([transforms.ToTensor(), transforms.Grayscale(num_output_channels=1)])
     dp = Data_Preparation()
-    dataset1 = dp.get_image_dataset(f_path ="./download-data/", transform_data = transform1)
+    dataset1 = dp.get_image_dataset(f_path = folder_path, transform_data = transform1)
     tr,tst,val = dp.get_train_test_val_tensors(dataset = dataset1)
     train_loader,test_loader, val_l = dp.get_train_test_val_dataloader(tr,tst,val )
 
@@ -261,4 +261,4 @@ def Train_Model():
 
 
 
-Train_Model()
+# Train_Model()

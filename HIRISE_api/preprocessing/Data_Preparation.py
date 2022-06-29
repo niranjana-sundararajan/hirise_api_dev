@@ -18,7 +18,7 @@ import math
 warnings.filterwarnings("ignore")
 
 Image.MAX_IMAGE_PIXELS = None
-ImageFile.LOAD_TRUgrid_columnsATED_IMAGES = True
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 if __package__ is None or __package__ == '':
     # uses current directory visibility
@@ -47,8 +47,30 @@ class Data_Preparation:
         else:
             cv2.imwrite(file_name, dst)
 
-    def tile_images(self, folder_path,image_directory, image_size_pixels, remove_background = True):
+    def resize_image(self, folder_path, resized_images_folder_path, pixel_length_cm = 250):
+        reduce_factor = 25/pixel_length_cm
         imgfiles = glob(f"{folder_path}/*.IMG")
+
+        # Convert to PIL Imgae
+        img_list = []
+        for img in tqdm(imgfiles):
+            img_list.append(Image.open(img))
+
+        if os.path.isdir(resized_images_folder_path):
+            os.chdir(resized_images_folder_path)
+        else:
+            os.makedirs(resized_images_folder_path)
+            os.chdir(resized_images_folder_path)
+
+        for im,name in tqdm(zip(img_list,imgfiles)):         
+            resized_im = im.resize((round(im.size[0]*reduce_factor), round(im.size[1]*reduce_factor)))
+            resized_im.save(name.split('\\')[1]+'_resizedimage.jpg')
+
+    def tile_images(self, folder_path,image_directory, image_size_pixels, resized = True,remove_background = True):
+        if resized:
+            imgfiles = glob(f"{folder_path}/*.png")
+        else:
+            imgfiles = glob(f"{folder_path}/*.IMG")
         # Convert to PIL Imgae
         img_list = []
         for img in imgfiles:
@@ -211,13 +233,14 @@ class Data_Preparation:
 
 
 dp = Data_Preparation()
+dp.resize_image(folder_path='./download-data',resized_images_folder_path= './download-data/resized-images/',pixel_length_cm = 250)
 # dp.tile_images(folder_path='./download-data',image_directory  ='./download-data/tiled-images/' , image_size_pixels = 256)
 # dp.remove_background("img_37376_15616.png")
 # dp.convert_to_grayscale(folder_path='./download-data/tiled-images',image_directory  ='./download-data/grayscale-images/')
 # dp.remove_image_with_empty_pixels(folder_path='./download-data/tiled-images/', max_percentage_empty_space = 10)
 
-transform1= transforms.Compose([transforms.ToTensor(), transforms.Grayscale(num_output_channels=1)])
-dataset1 = dp.get_image_dataset(f_path ="./download-data/", transform_data = transform1)
+# transform1= transforms.Compose([transforms.ToTensor(), transforms.Grayscale(num_output_channels=1)])
+# dataset1 = dp.get_image_dataset(f_path ="./download-data/", transform_data = transform1)
 
 
 # # print(dataset.test_dataset[10][0])
