@@ -12,4 +12,5 @@ pyamg
 pytest
 requests
 tqdm
+twill
 setuptools

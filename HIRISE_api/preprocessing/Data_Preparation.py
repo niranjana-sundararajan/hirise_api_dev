@@ -23,7 +23,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 if __package__ is None or __package__ == '':
     # uses current directory visibility
     from hirise import Image_Client
-    from Image_Loader import Hirise_Image_Dataset
+    import Image_Loader
 else:
     from . import Image_Loader
 # Define the current and parent directories and paths
@@ -64,11 +64,17 @@ class Data_Preparation:
 
         for im,name in tqdm(zip(img_list,imgfiles)):         
             resized_im = im.resize((round(im.size[0]*reduce_factor), round(im.size[1]*reduce_factor)))
-            resized_im.save(name.split('\\')[1]+'_resizedimage.jpg')
-
+            try:
+                fname = name.split('\\')[1]
+                fname = fname.split('.')[0]
+            except:
+                fname = name.split('/')[1]
+                fname  = fname.split('.')[0]
+            resized_im.save(name.split('/')[-1]+'_resizedimage.jpg')
+            
     def tile_images(self, folder_path,image_directory, image_size_pixels, resized = True,remove_background = True):
         if resized:
-            imgfiles = glob(f"{folder_path}/*.png")
+            imgfiles = glob(f"{folder_path}/*.jpg")
         else:
             imgfiles = glob(f"{folder_path}/*.IMG")
         # Convert to PIL Imgae
@@ -81,12 +87,14 @@ class Data_Preparation:
         else:
             os.makedirs(image_directory)
             os.chdir(image_directory)
-        for img,name in zip(img_list,imgfiles):
+        
+        for img,name in tqdm(zip(img_list,imgfiles)):
             try:
+                
                 im = np.asarray(img)
                 for r in range(0,math.ceil(im.shape[0]),image_size_pixels):
                     for c in range(0,math.ceil(im.shape[1]),image_size_pixels):
-                            f_name = name.split('\\')[1] + f"_{r}_{c}.png"
+                            f_name = name.split('\\')[1].split('.')[0] + f"_{r}_{c}.jpg"
                             cv2.imwrite(str(f_name), im[r:r+image_size_pixels, c:c+image_size_pixels,:] )
                             if remove_background:
                                 Data_Preparation.remove_background(self,file_name =f_name)
@@ -96,7 +104,7 @@ class Data_Preparation:
         sys.path.insert(0, parent_dir_path)
 
     def convert_to_grayscale(self, folder_path,image_directory, remove_background = True):
-        imgfiles = glob(f"{folder_path}/*.png")
+        imgfiles = glob(f"{folder_path}/*.jpg")
 
         im_list = []
         # Convert to PIL Imgae
@@ -121,7 +129,7 @@ class Data_Preparation:
         sys.path.insert(0, parent_dir_path)
 
     def remove_image_with_empty_pixels(self, folder_path, max_percentage_empty_space = 20):
-        imgfiles = glob(f"{folder_path}/*.png")
+        imgfiles = glob(f"{folder_path}/*.jpg")
 
         if os.path.isdir(folder_path):
             os.chdir(folder_path)
@@ -134,10 +142,10 @@ class Data_Preparation:
             width, height = img.width, img.height
             total = width * height
             for pixel in img.getdata():
-                if pixel == (0,0,0,0):
+                if pixel == (0,0,0,0) or pixel == (0,0,0):            
                     empty += 1
             percent = round((empty * 100.0/total),1)
-            if(percent >= max_percentage_empty_space):
+            if(percent >= max_percentage_empty_space):            
                 os.remove(f_name.split('\\')[1])
         sys.path.insert(0, parent_dir_path)
 
@@ -213,7 +221,7 @@ class Data_Preparation:
                 idx = random.randint(0, len(dataset.train_dataset))
 
                 # Get the sample and target fromthe traiig dataset
-                sample = dataset.train_dataset[idx]
+                sample, _ = dataset.train_dataset[idx]
 
                 try:
                     # Exception handling - if it is PIL
@@ -231,10 +239,12 @@ class Data_Preparation:
         plt.show()
 
 
+# imc = Image_Client.Image_Client()
+# imc.download_random_images(fol_path='./download-data-batch',image_count=5)
+# dp = Data_Preparation()
 
-dp = Data_Preparation()
-dp.resize_image(folder_path='./download-data',resized_images_folder_path= './download-data/resized-images/',pixel_length_cm = 250)
-# dp.tile_images(folder_path='./download-data',image_directory  ='./download-data/tiled-images/' , image_size_pixels = 256)
+# dp.resize_image(folder_path='./download-data',resized_images_folder_path= './download-data/resized-images/',pixel_length_cm = 250)
+# dp.tile_images(folder_path='./download-data/resized_images/',image_directory  ='./download-data/tiled-images/' , image_size_pixels = 256)
 # dp.remove_background("img_37376_15616.png")
 # dp.convert_to_grayscale(folder_path='./download-data/tiled-images',image_directory  ='./download-data/grayscale-images/')
 # dp.remove_image_with_empty_pixels(folder_path='./download-data/tiled-images/', max_percentage_empty_space = 10)

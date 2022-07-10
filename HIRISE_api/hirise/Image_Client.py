@@ -1,8 +1,8 @@
-import requests
+import requests, json
 from bs4 import BeautifulSoup
 from pprint import pprint
 import pandas as pd
-
+import torch
 from tqdm import tqdm
 
 from datetime import datetime
@@ -10,7 +10,7 @@ import os, sys
 from pathlib import Path
 import pkg_resources
 import shutil
-
+import random
 # Define the current and parent directories and paths
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
@@ -30,6 +30,8 @@ else:
 
 
 class Image_Client:
+
+
     def download_database(self, folder_path):
         shutil.copyfile(CSV_FILE_PATH, folder_path)
 
@@ -503,9 +505,7 @@ class Image_Client:
             hirise_dataframe = pd.DataFrame()
 
     def download(self, Hiriseimg_objs, folder_path, data_reload=True):
-        if not folder_path:
-            print(" Error! Please enter download path")
-            return None
+
         if os.path.exists(folder_path) and data_reload:
             # Delete existing files in the directory
             [f.unlink() for f in Path(folder_path).glob("*") if f.is_file()]
@@ -556,6 +556,90 @@ class Image_Client:
             self, Hiriseimg_objs=Hirise_img_objects, folder_path=fol_path
         )
 
+    def filter_science_theme(
+                self, science_themes, image_count = 5,user_name = 'niranjana',password = 'B2bcTFp!5AtEAs5'
+    ):
+        hirise_df = pd.read_csv(CSV_FILE_PATH)
+        if isinstance(science_themes, str):
+            science_themes = [science_themes]
+        elif all(
+            isinstance(item, str) for item in science_themes
+        ):  # check iterable for stringness of all items. Will raise TypeError if item is not iterable
+            pass
+        else:
+            raise TypeError
+
+        # Define the urls needed for the downloads
+        login_url = "https://www.uahirise.org/hiwish/login"
+        payload = {
+        'username': user_name,
+        'password': password
+        }
+        science_theme_list = {
+             "Climate Change" :"1" ,
+             "Eolian Process" : "2" ,
+             "Fluvial Process" : "3" ,
+            "Future Exploration/Landing Sites" : "4" ,
+            "Geologic Contacts/Stratigraphy" : "5",
+            "Glacial/Periglacial Processes" :"6",
+            "Hydrothermal Processes" :"7",
+            "Impact Process" : "8",
+            "Landscape Evolution" :"9",
+            "Mass Wasting Processes" :"10",
+             "Polar Geology" :"11",
+             "Seasonal Processes" :"12",
+             "Sedimentary/Layering Processes" :"13",
+             "Rocks and Regolith": "14",
+             "Composition and Photometry" : "15",
+              "Tectonic Processes" : "16",
+              "Volcanic Processes" : "17",
+              "Other" : "18"
+        }
+
+        for theme in science_themes:
+            # Login to the website
+
+            with requests.Session() as connection:
+
+                connection.post(login_url, data=payload)
+
+                post_url = f"https://www.uahirise.org/hiwish/search?cenLat=0.0&latRange=0.0&cenLon=0.0&lonRange=0.0&text=&word=on&sd=on&theme1={science_theme_list.get(theme)}&username=&size=100000"
+                req2 = connection.get(post_url)
+                soup = BeautifulSoup(req2.text, "html.parser")
+                all_tables = soup.find_all("table")
+                value_table = all_tables[3]
+
+                rows = value_table.find_all("tr")
+                rows = rows[1:]
+                observation_list = []
+                labels_list = []
+
+                for i in range(len(rows)):
+                    labels_list.append(rows[i].find_all("a"))
+
+                titles_list = []    
+                for label in labels_list:
+                    for i in range(len(label)):
+                        titles_list.append(label[i]["title"])
+
+                observations = [x.split(" ")[2] for x in titles_list if "View observation" in x]
+                for obs in observations:
+                    select_row = hirise_df[hirise_df["FILE_NAME"].str.contains(obs) == True]
+                    string_fname = select_row["FILE_NAME"].tolist()
+                    if string_fname!= []:
+                        string_fname = string_fname[0]
+
+                        observation_list.append(string_fname)
+
+        rand_lst = random.sample(observation_list,image_count) 
+        
+        # Create HIRISE img object outputs using the hirise_img class
+        Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in rand_lst]
+
+        return Hirise_img_objects
 
 # imc = Image_Client()
 # imc.download_random_images(fol_path="./download-data", image_count=10)
+# hobjs = imc.filter_science_theme(science_themes = "Rocks and Regolith")
+
+# imc.download(Hiriseimg_objs = hobjs, folder_path= 'download-data-batch/', data_reload=True)
