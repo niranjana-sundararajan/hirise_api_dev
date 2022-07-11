@@ -70,7 +70,7 @@ class Data_Preparation:
             except:
                 fname = name.split('/')[1]
                 fname  = fname.split('.')[0]
-            resized_im.save(name.split('/')[-1]+'_resizedimage.jpg')
+            resized_im.save(fname+'_resizedimage.jpg')
             
     def tile_images(self, folder_path,image_directory, image_size_pixels, resized = True,remove_background = True):
         if resized:
@@ -221,7 +221,7 @@ class Data_Preparation:
                 idx = random.randint(0, len(dataset.train_dataset))
 
                 # Get the sample and target fromthe traiig dataset
-                sample, _ = dataset.train_dataset[idx]
+                sample, target  = dataset.train_dataset[idx]
 
                 try:
                     # Exception handling - if it is PIL
@@ -229,10 +229,10 @@ class Data_Preparation:
                 except:
                     # If tensor of shape CHW
                     axarr[i][j].imshow(sample.permute(1,2,0), cmap = "gray") 
-                # # Get the classes of the target data
-                # target_name = dataset.dataset.targets[target]
-                # # Label each image eith the target name and the class it belongs to
-                # axarr[i][j].set_title("%s (%i)"%(target_name, target))
+                # Get the classes of the target data
+                target_name = dataset.dataset.targets[target]
+                # Label each image eith the target name and the class it belongs to
+                axarr[i][j].set_title("%s (%i)"%(target_name, target))
         # Deine the grid layout and padding
         
         fig.tight_layout(pad=1)
@@ -243,22 +243,29 @@ class Data_Preparation:
 # imc.download_random_images(fol_path='./download-data-batch',image_count=5)
 # dp = Data_Preparation()
 
-# dp.resize_image(folder_path='./download-data',resized_images_folder_path= './download-data/resized-images/',pixel_length_cm = 250)
-# dp.tile_images(folder_path='./download-data/resized_images/',image_directory  ='./download-data/tiled-images/' , image_size_pixels = 256)
+# dp.resize_image(folder_path='./download-data-batch',resized_images_folder_path= './download-data-batch/rocks-resized-images/',pixel_length_cm = 250)
+# dp.resize_image(folder_path='./download-data-theme/FluvialProcess',resized_images_folder_path= './download-data-batch/fluvial-resized-images/',pixel_length_cm = 250)
+# dp.resize_image(folder_path='./download-data-theme/ImpactProcesses',resized_images_folder_path= './download-data-batch/impact-resized-images/',pixel_length_cm = 250)
+# dp.resize_image(folder_path='./download-data-theme/RocksandRegolith',resized_images_folder_path= './download-data-batch/rocks-resized-images/',pixel_length_cm = 250)
+# dp.resize_image(folder_path='./download-data-theme/VolcanicProcesses',resized_images_folder_path= './download-data-batch/volcanic-resized-images/',pixel_length_cm = 250)
+
+
+
+
+
+# dp.tile_images(folder_path='./download-data-theme2/resized-images/volcanic-resized-images/',image_directory  ='./download-data-batch/volcanic-tiled-images/' , image_size_pixels = 256)
 # dp.remove_background("img_37376_15616.png")
 # dp.convert_to_grayscale(folder_path='./download-data/tiled-images',image_directory  ='./download-data/grayscale-images/')
-# dp.remove_image_with_empty_pixels(folder_path='./download-data/tiled-images/', max_percentage_empty_space = 10)
+# dp.remove_image_with_empty_pixels(folder_path='./download-data-theme2/tiled-images/eolian-tiled-images/', max_percentage_empty_space = 10)
 
 # transform1= transforms.Compose([transforms.ToTensor(), transforms.Grayscale(num_output_channels=1)])
-# dataset1 = dp.get_image_dataset(f_path ="./download-data/", transform_data = transform1)
+# dataset1 = dp.get_image_dataset(f_path ="./download-data-theme2/tiled-images/", transform_data = transform1)
 
 
 # # print(dataset.test_dataset[10][0])
-
+# print(dataset1.dataset.class_to_idx)
 # print(dp.show_training_data(dataset= dataset1))
 # print(len(dataset1.test_dataset))
 
 # tr,tst,val = Data_Preparation.get_train_test_val_tensors(dataset = dataset1)
-
-
 # tr_l,tst_l, val_l = Data_Preparation.get_train_test_val_dataloader(train_data = tr, test_data = tst, val_data = val,  b_size = 128)

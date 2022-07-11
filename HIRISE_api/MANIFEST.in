@@ -1,2 +1,3 @@
 include hirise/hirise_data.csv
+include hirise/theme_data.csv
 include requirements.txt

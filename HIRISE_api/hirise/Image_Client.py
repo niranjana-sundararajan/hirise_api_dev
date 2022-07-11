@@ -21,12 +21,14 @@ if __package__ is None or __package__ == "":
     import utils
 
     CSV_FILE_PATH = "./HIRISE_api/hirise/hirise_data.csv"
+    THEME_FILE_PATH = "./HIRISE_api/hirise/theme_data.csv"
 else:
     # uses current package visibility
     from . import Hirise_Image
     from . import utils
 
     CSV_FILE_PATH = pkg_resources.resource_filename("hirise", "hirise_data.csv")
+    THEME_FILE_PATH = pkg_resources.resource_filename("hirise", "theme_data.csv")
 
 
 class Image_Client:
@@ -491,7 +493,7 @@ class Image_Client:
 
             if __package__ is None or __package__ == "":
                 hirise_dataframe.to_csv(
-                    "hirise_data_TRA.csv",
+                    "hirise_data.csv",
                     mode="a",
                     header=False,
                     encoding="utf-8",
@@ -556,9 +558,13 @@ class Image_Client:
             self, Hiriseimg_objs=Hirise_img_objects, folder_path=fol_path
         )
 
-    def filter_science_theme(
-                self, science_themes, image_count = 5,user_name = 'niranjana',password = 'B2bcTFp!5AtEAs5'
+    def reload_science_theme_database(
+                self, science_themes, image_count = 1,user_name = 'niranjana',password = 'B2bcTFp!5AtEAs5'
     ):
+        cols = [
+            "FILE_NAME",
+            "SCIENCE_THEME"]
+        themes_dataframe = pd.DataFrame(columns=cols)
         hirise_df = pd.read_csv(CSV_FILE_PATH)
         if isinstance(science_themes, str):
             science_themes = [science_themes]
@@ -575,11 +581,15 @@ class Image_Client:
         'username': user_name,
         'password': password
         }
-        science_theme_list = {
-             "Climate Change" :"1" ,
-             "Eolian Process" : "2" ,
-             "Fluvial Process" : "3" ,
-            "Future Exploration/Landing Sites" : "4" ,
+
+
+        for theme in science_themes:
+            # Login to the website
+            science_theme_list = {
+             "Climate Change" : "1",
+             "Eolian Process" : "2",
+             "Fluvial Process" : "3",
+            "Future Exploration/Landing Sites": "4", 
             "Geologic Contacts/Stratigraphy" : "5",
             "Glacial/Periglacial Processes" :"6",
             "Hydrothermal Processes" :"7",
@@ -595,10 +605,6 @@ class Image_Client:
               "Volcanic Processes" : "17",
               "Other" : "18"
         }
-
-        for theme in science_themes:
-            # Login to the website
-
             with requests.Session() as connection:
 
                 connection.post(login_url, data=payload)
@@ -611,6 +617,7 @@ class Image_Client:
 
                 rows = value_table.find_all("tr")
                 rows = rows[1:]
+                science_theme_list = []
                 observation_list = []
                 labels_list = []
 
@@ -630,16 +637,55 @@ class Image_Client:
                         string_fname = string_fname[0]
 
                         observation_list.append(string_fname)
+                        science_theme_list.append(theme)
+                            # Add lists to dataframe
+                themes_dataframe["FILE_NAME"] = observation_list
+                themes_dataframe["SCIENCE_PHASE"] = science_theme_list
 
-        rand_lst = random.sample(observation_list,image_count) 
+                if __package__ is None or __package__ == "":
+                    themes_dataframe.to_csv(
+                        "theme_data.csv",
+                        mode="a",
+                        header=False,
+                        encoding="utf-8",
+                        index=False,
+                    )
+                else:
+                    themes_dataframe.to_csv(
+                        "folder_path", mode="a", encoding="utf-8", header=False, index=False
+                    )
+                themes_dataframe = pd.DataFrame()
+
+    def filter_science_theme(self, science_theme, image_count = 5, local_database_path=False):
+        cols = [
+            "FILE_NAME",
+            "SCIENCE_THEME"]
+        if local_database_path:
+            theme_df = pd.read_csv(THEME_FILE_PATH, names=cols)
+        else:
+            theme_df = pd.read_csv(THEME_FILE_PATH, names=cols)
         
+        selected_theme_df = theme_df[theme_df['SCIENCE_THEME'] == science_theme]
+        random_samples = selected_theme_df.sample(n=image_count)
+        
+
+        # Filenames extracted from the queried dataframe
+        f_names = [str(x) for x in random_samples["FILE_NAME"]]
+
         # Create HIRISE img object outputs using the hirise_img class
-        Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in rand_lst]
+        Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in f_names]
 
         return Hirise_img_objects
 
+
 # imc = Image_Client()
 # imc.download_random_images(fol_path="./download-data", image_count=10)
-# hobjs = imc.filter_science_theme(science_themes = "Rocks and Regolith")
+
+# hobjs = imc.filter_science_theme(science_theme="Eolian Process")
+# hobjs = imc.filter_science_theme(science_theme="Fluvial Process")
+# hobjs = imc.filter_science_theme(science_theme="Impact Process")
+# hobjs = imc.filter_science_theme(science_theme="Rocks and Regolith")
+# hobjs = imc.filter_science_theme(science_theme="Volcanic Processes")
+
 
 # imc.download(Hiriseimg_objs = hobjs, folder_path= 'download-data-batch/', data_reload=True)
