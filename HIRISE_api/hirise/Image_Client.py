@@ -1,3 +1,4 @@
+from matplotlib.pyplot import text
 import requests, json
 from bs4 import BeautifulSoup
 from pprint import pprint
@@ -656,7 +657,7 @@ class Image_Client:
                     )
                 themes_dataframe = pd.DataFrame()
 
-    def filter_science_theme(self, science_theme, image_count = 5, local_database_path=False):
+    def filter_science_theme(self, science_theme, image_count = 15, local_database_path=False):
         cols = [
             "FILE_NAME",
             "SCIENCE_THEME"]
@@ -677,15 +678,82 @@ class Image_Client:
 
         return Hirise_img_objects
 
+    def filter_by_title(self, title_keywords, image_count = None,return_titles = False,user_name = 'niranjana',password = 'B2bcTFp!5AtEAs5'):
+        login_url = "https://www.uahirise.org/hiwish/login"
+        payload = {
+        'username': user_name,
+        'password': password
+        }
+        with requests.Session() as connection:
+            connection.post(login_url, data=payload)
+            try:
+                CSV_FILE_PATH = './HIRISE_api/hirise/hirise_data.csv'
+                hirise_df = pd.read_csv(CSV_FILE_PATH)
+            except:
+                CSV_FILE_PATH = '../HIRISE_api/hirise/hirise_data.csv'
+                hirise_df = pd.read_csv(CSV_FILE_PATH)
 
-# imc = Image_Client()
+            post_url = f"https://www.uahirise.org/hiwish/search?cenLat=0.0&latRange=0.0&cenLon=0.0&lonRange=0.0&text={title_keywords}&word=on&sd=on&username=&size=100000"
+            req2 = connection.get(post_url)
+            soup = BeautifulSoup(req2.text, "html.parser")
+            all_tables = soup.find_all("table")
+            value_table = all_tables[3]
+
+            rows = value_table.find_all("tr")
+            rows = rows[1:]
+            observation_list = []
+            labels_list = []
+            description_list = []
+
+            for i in range(len(rows)):
+                component = rows[i].find_all("a")
+                data = component[1]
+                data = data.get_text()
+                description_list.append(data)
+
+            for i in range(len(rows)):
+                labels_list.append(rows[i].find_all("a"))
+
+            titles_list = []    
+            for label in labels_list:
+                for i in range(len(label)):
+                    titles_list.append(label[i]["title"])
+
+            observations = [x.split(" ")[2] for x in titles_list if "View observation" in x]
+            for obs in observations:
+                select_row = hirise_df[hirise_df["FILE_NAME"].str.contains(obs) == True]
+                string_fname = select_row["FILE_NAME"].tolist()
+                if string_fname!= []:
+                    string_fname = string_fname[0]
+
+                    observation_list.append(string_fname)
+                        # Add lists to dataframe            
+                    # Create HIRISE img object outputs using the hirise_img class
+            if image_count:
+                random_samples = random.sample(observation_list, image_count)
+            Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in random_samples]   
+        # Return to parent directory
+            
+            if return_titles:
+                    return Hirise_img_objects,description_list
+            else:
+                return Hirise_img_objects
+
+imc = Image_Client()
 # imc.download_random_images(fol_path="./download-data", image_count=10)
 
 # hobjs = imc.filter_science_theme(science_theme="Eolian Process")
 # hobjs = imc.filter_science_theme(science_theme="Fluvial Process")
 # hobjs = imc.filter_science_theme(science_theme="Impact Process")
-# hobjs = imc.filter_science_theme(science_theme="Rocks and Regolith")
+# hobjs = imc.filter_science_theme(science_themebbb="Rocks and Regolith")
 # hobjs = imc.filter_science_theme(science_theme="Volcanic Processes")
 
+list_titles = ['Pedestal crater Impact Processes']
+# ['pedestal crater']
+    # 'gullies']
+# , 'pedestal crater', 'ridges','']
+# # ,'cratered cones', 'lava flow']
 
-# imc.download(Hiriseimg_objs = hobjs, folder_path= 'download-data-batch/', data_reload=True)
+for title in list_titles:
+    hobjs = imc.filter_by_title(title_keywords= title, image_count=5)
+    imc.download(Hiriseimg_objs = hobjs, folder_path= f'download-data-batch/{title}', data_reload=False)

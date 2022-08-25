@@ -19,7 +19,7 @@ setup(
     install_requires=['wheel','humanize', 'requests', 'beautifulsoup4','pyamg'],
     keywords=['python', 'HIRISE', 'NASA', 'PDS', 'API', 'image data'],
     classifiers=[
-        "Development Status :: 2 - Development",
+        "Development Status :: 1 - Planning",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Operating System :: Unix",

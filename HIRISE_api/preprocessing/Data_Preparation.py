@@ -32,7 +32,6 @@ parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 
 
 
-
 class Data_Preparation:
     """Class that allows for data prepartion as part of the preprocessing of the hirise images. """
     def remove_background(self,file_name):
@@ -65,12 +64,9 @@ class Data_Preparation:
         for im,name in tqdm(zip(img_list,imgfiles)):         
             resized_im = im.resize((round(im.size[0]*reduce_factor), round(im.size[1]*reduce_factor)))
             try:
-                fname = name.split('\\')[1]
-                fname = fname.split('.')[0]
+              resized_im.save(name.split('/')[-1]+'_resizedimage.jpg')
             except:
-                fname = name.split('/')[1]
-                fname  = fname.split('.')[0]
-            resized_im.save(fname+'_resizedimage.jpg')
+              pass
             
     def tile_images(self, folder_path,image_directory, image_size_pixels, resized = True,remove_background = True):
         if resized:
@@ -87,21 +83,20 @@ class Data_Preparation:
         else:
             os.makedirs(image_directory)
             os.chdir(image_directory)
-        
+
         for img,name in tqdm(zip(img_list,imgfiles)):
             try:
-                
                 im = np.asarray(img)
                 for r in range(0,math.ceil(im.shape[0]),image_size_pixels):
                     for c in range(0,math.ceil(im.shape[1]),image_size_pixels):
-                            f_name = name.split('\\')[1].split('.')[0] + f"_{r}_{c}.jpg"
+                            f_name = name.split('/')[-1].split('.')[0] + f"_{r}_{c}.jpg"
                             cv2.imwrite(str(f_name), im[r:r+image_size_pixels, c:c+image_size_pixels,:] )
                             if remove_background:
                                 Data_Preparation.remove_background(self,file_name =f_name)
             except:
                 pass                
 
-        sys.path.insert(0, parent_dir_path)
+        # sys.path.insert(0, parent_dir_path)
 
     def convert_to_grayscale(self, folder_path,image_directory, remove_background = True):
         imgfiles = glob(f"{folder_path}/*.jpg")
@@ -126,7 +121,7 @@ class Data_Preparation:
                 pass
             if remove_background:
                 Data_Preparation.remove_background(self,file_name =f_name)
-        sys.path.insert(0, parent_dir_path)
+        # sys.path.insert(0, parent_dir_path)
 
     def remove_image_with_empty_pixels(self, folder_path, max_percentage_empty_space = 20):
         imgfiles = glob(f"{folder_path}/*.jpg")
@@ -147,7 +142,7 @@ class Data_Preparation:
             percent = round((empty * 100.0/total),1)
             if(percent >= max_percentage_empty_space):            
                 os.remove(f_name.split('\\')[1])
-        sys.path.insert(0, parent_dir_path)
+        # sys.path.insert(0, parent_dir_path)
 
     def get_image_dataset(self,f_path,  transform_data =  None ):
         if not transform_data:
@@ -198,11 +193,25 @@ class Data_Preparation:
                 pass
             return  train_tensor, test_tensor, val_tensor
 
+    def get_dataset_tensor(self, dataset):
+            tensor_list = []
+            # Append from the MedicalMNIST Object the training target and labels
+            for data in dataset.dataset:
+                tensor_list.append(data[0])
+
+            dataset_tensor = torch.Tensor(len(tensor_list))
+            try :
+                torch.cat(tensor_list,out = dataset_tensor)
+            except :
+                pass
+   
+            return  dataset_tensor
+
     def get_train_test_val_dataloader(self, train_data, test_data, val_data,  b_size = 128):
         # Create TorchTensor Datasets containing training_data, testing_data, validation_data
-        training_data = TensorDataset(train_data)
-        validation_data = TensorDataset(val_data)
-        testing_data = TensorDataset(test_data)
+        training_data = TensorDataset(train_data,train_data.long() )
+        validation_data = TensorDataset(val_data,val_data.long() )
+        testing_data = TensorDataset(test_data, test_data.long())
         train_loader = DataLoader(dataset = training_data, batch_size=b_size)
         valid_loader = DataLoader(dataset = validation_data, batch_size=b_size)
         test_loader = DataLoader(dataset = testing_data, batch_size=b_size,shuffle=True)
@@ -220,7 +229,7 @@ class Data_Preparation:
                 # Generate a random index in the training dataset
                 idx = random.randint(0, len(dataset.train_dataset))
 
-                # Get the sample and target fromthe traiig dataset
+                # Get the sample and target fromthe traiig datasets
                 sample, target  = dataset.train_dataset[idx]
 
                 try:
@@ -237,35 +246,3 @@ class Data_Preparation:
         
         fig.tight_layout(pad=1)
         plt.show()
-
-
-# imc = Image_Client.Image_Client()
-# imc.download_random_images(fol_path='./download-data-batch',image_count=5)
-# dp = Data_Preparation()
-
-# dp.resize_image(folder_path='./download-data-batch',resized_images_folder_path= './download-data-batch/rocks-resized-images/',pixel_length_cm = 250)
-# dp.resize_image(folder_path='./download-data-theme/FluvialProcess',resized_images_folder_path= './download-data-batch/fluvial-resized-images/',pixel_length_cm = 250)
-# dp.resize_image(folder_path='./download-data-theme/ImpactProcesses',resized_images_folder_path= './download-data-batch/impact-resized-images/',pixel_length_cm = 250)
-# dp.resize_image(folder_path='./download-data-theme/RocksandRegolith',resized_images_folder_path= './download-data-batch/rocks-resized-images/',pixel_length_cm = 250)
-# dp.resize_image(folder_path='./download-data-theme/VolcanicProcesses',resized_images_folder_path= './download-data-batch/volcanic-resized-images/',pixel_length_cm = 250)
-
-
-
-
-
-# dp.tile_images(folder_path='./download-data-theme2/resized-images/volcanic-resized-images/',image_directory  ='./download-data-batch/volcanic-tiled-images/' , image_size_pixels = 256)
-# dp.remove_background("img_37376_15616.png")
-# dp.convert_to_grayscale(folder_path='./download-data/tiled-images',image_directory  ='./download-data/grayscale-images/')
-# dp.remove_image_with_empty_pixels(folder_path='./download-data-theme2/tiled-images/eolian-tiled-images/', max_percentage_empty_space = 10)
-
-# transform1= transforms.Compose([transforms.ToTensor(), transforms.Grayscale(num_output_channels=1)])
-# dataset1 = dp.get_image_dataset(f_path ="./download-data-theme2/tiled-images/", transform_data = transform1)
-
-
-# # print(dataset.test_dataset[10][0])
-# print(dataset1.dataset.class_to_idx)
-# print(dp.show_training_data(dataset= dataset1))
-# print(len(dataset1.test_dataset))
-
-# tr,tst,val = Data_Preparation.get_train_test_val_tensors(dataset = dataset1)
-# tr_l,tst_l, val_l = Data_Preparation.get_train_test_val_dataloader(train_data = tr, test_data = tst, val_data = val,  b_size = 128)

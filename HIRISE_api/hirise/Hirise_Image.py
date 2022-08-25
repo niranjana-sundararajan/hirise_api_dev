@@ -4,11 +4,11 @@ import pandas as pd
 from tqdm import tqdm
 import humanize
 import pkg_resources
-
+print(dir())
 
 if __package__ is None or __package__ == "":
     # uses current directory visibility
-    CSV_FILE_PATH = "../HIRISE_api/hirise/hirise_data.csv"
+    CSV_FILE_PATH = "../../HIRISE_api/hirise/hirise_data.csv"
 else:
     CSV_FILE_PATH = pkg_resources.resource_filename("hirise", "hirise_data.csv")
 

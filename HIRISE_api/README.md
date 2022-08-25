@@ -13,7 +13,24 @@ This piece of software is used to get HIRISE images from NASA's PDS.
 - Download images based on mission phase orbital range and the observation id
 - Get specific metadata including - download size, number of images, label size etc 
 
-
+## Folder Hierarchies
+├── src
+│   ├── controller
+│   │   ├── **/*.css
+│   ├── views
+│   ├── model
+│   ├── index.js
+├── public
+│   ├── css
+│   │   ├── **/*.css
+│   ├── images
+│   ├── js
+│   ├── index.html
+├── dist (or build
+├── node_modules
+├── package.json
+├── package-lock.json 
+└── .gitignore
 ## Tech
 
 HIRISE IMAGES  uses a number of open source projects to work properly:

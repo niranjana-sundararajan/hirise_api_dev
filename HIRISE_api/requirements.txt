@@ -1,4 +1,5 @@
 beautifulsoup4
+livelossplot
 humanize
 pandas
 numpy
@@ -8,9 +9,15 @@ glob
 cv2
 math
 PIL
+rasterfairy
+seaborn
+hdbscan
+umap-learn
 pyamg
 pytest
 requests
 tqdm
 twill
 setuptools
+sklearn
+mlxtend
