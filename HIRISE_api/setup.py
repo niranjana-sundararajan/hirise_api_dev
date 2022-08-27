@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 PCKGNAME = "HIRISEimgs"
-VERSION = '0.0.0.0.dev54'
+VERSION = '0.0.0.0.dev55'
 DESCRIPTION = 'HIRISE Image data and information'
 
 # Setting up
@@ -16,7 +16,7 @@ setup(
     packages=find_packages(),
     package_dir= {'hirise' : "hirise"},
     include_package_data=True ,
-    install_requires=['wheel','humanize', 'requests', 'beautifulsoup4','pyamg'],
+    install_requires=['wheel','humanize', 'requests', 'beautifulsoup4'],
     keywords=['python', 'HIRISE', 'NASA', 'PDS', 'API', 'image data'],
     classifiers=[
         "Development Status :: 1 - Planning",

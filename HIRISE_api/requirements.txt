@@ -13,7 +13,6 @@ rasterfairy
 seaborn
 hdbscan
 umap-learn
-pyamg
 pytest
 requests
 tqdm
