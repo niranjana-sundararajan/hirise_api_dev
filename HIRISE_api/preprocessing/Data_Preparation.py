@@ -1,56 +1,54 @@
-
-import pandas as pd
-import torch
-from torch.utils.data import TensorDataset,Dataset, DataLoader,random_split
-import matplotlib.pyplot as plt
-from torchvision import datasets, transforms
+from torch.utils.data import TensorDataset, DataLoader, random_split
+from torchvision import transforms
 from glob import glob
-import cv2
-import os,sys
-os.environ['OPEgrid_columnsV_IO_ENABLE_JASPER'] = 'true'
-import numpy as np
-from PIL import Image, ImageFile, ImageOps
+from PIL import Image, ImageFile
 from tqdm import tqdm
-import random
-# Ignore warnings
-import warnings
+import matplotlib.pyplot as plt
+import torch
+import cv2
+import os
 import math
+import random
+import numpy as np
+import warnings  # Ignore warnings
+
+os.environ['OPEgrid_columnsV_IO_ENABLE_JASPER'] = 'true'
 warnings.filterwarnings("ignore")
 
 Image.MAX_IMAGE_PIXELS = None
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-if __package__ is None or __package__ == '':
-    # uses current directory visibility
-    from hirise import Image_Client
-    import Image_Loader
-else:
-    from . import Image_Loader
 # Define the current and parent directories and paths
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 
+if __package__ is None or __package__ == '':
+    # uses current directory visibility
+    import Image_Loader
+else:
+    from . import Image_Loader
 
 
-class Data_Preparation:
-    """Class that allows for data prepartion as part of the preprocessing of the hirise images. """
-    def remove_background(self,file_name):
+class DataPreparation:
+    """Class that allows for data preparation as part of the preprocessing of the hirise images."""
+
+    def remove_background(self, file_name):
         src = cv2.imread(file_name, 1)
         tmp = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
-        _,alpha = cv2.threshold(tmp,0,255,cv2.THRESH_BINARY)
+        _, alpha = cv2.threshold(tmp, 0, 255, cv2.THRESH_BINARY)
         b, g, r = cv2.split(src)
-        rgba = [b,g,r, alpha]
-        dst = cv2.merge(rgba,4)
+        rgba = [b, g, r, alpha]
+        dst = cv2.merge(rgba, 4)
         if np.allclose(np.asarray(dst), 0):
             os.remove(file_name)
         else:
             cv2.imwrite(file_name, dst)
 
-    def resize_image(self, folder_path, resized_images_folder_path, pixel_length_cm = 250):
-        reduce_factor = 25/pixel_length_cm
+    def resize_image(self, folder_path, resized_images_folder_path, pixel_length_cm=250):
+        reduce_factor = 25 / pixel_length_cm
         imgfiles = glob(f"{folder_path}/*.IMG")
 
-        # Convert to PIL Imgae
+        # Convert to PIL Image
         img_list = []
         for img in tqdm(imgfiles):
             img_list.append(Image.open(img))
@@ -61,19 +59,19 @@ class Data_Preparation:
             os.makedirs(resized_images_folder_path)
             os.chdir(resized_images_folder_path)
 
-        for im,name in tqdm(zip(img_list,imgfiles)):         
-            resized_im = im.resize((round(im.size[0]*reduce_factor), round(im.size[1]*reduce_factor)))
+        for im, name in tqdm(zip(img_list, imgfiles)):
+            resized_im = im.resize((round(im.size[0] * reduce_factor), round(im.size[1] * reduce_factor)))
             try:
-              resized_im.save(name.split('/')[-1]+'_resizedimage.jpg')
-            except:
-              pass
-            
-    def tile_images(self, folder_path,image_directory, image_size_pixels, resized = True,remove_background = True):
+                resized_im.save(name.split('/')[-1] + '_resizedimage.jpg')
+            except (Exception,):
+                pass
+
+    def tile_images(self, folder_path, image_directory, image_size_pixels, resized=True, remove_background=True):
         if resized:
             imgfiles = glob(f"{folder_path}/*.jpg")
         else:
             imgfiles = glob(f"{folder_path}/*.IMG")
-        # Convert to PIL Imgae
+        # Convert to PIL Image
         img_list = []
         for img in imgfiles:
             img_list.append(Image.open(img))
@@ -84,52 +82,50 @@ class Data_Preparation:
             os.makedirs(image_directory)
             os.chdir(image_directory)
 
-        for img,name in tqdm(zip(img_list,imgfiles)):
+        for img, name in tqdm(zip(img_list, imgfiles)):
             try:
                 im = np.asarray(img)
-                for r in range(0,math.ceil(im.shape[0]),image_size_pixels):
-                    for c in range(0,math.ceil(im.shape[1]),image_size_pixels):
-                            f_name = name.split('/')[-1].split('.')[0] + f"_{r}_{c}.jpg"
-                            cv2.imwrite(str(f_name), im[r:r+image_size_pixels, c:c+image_size_pixels,:] )
-                            if remove_background:
-                                Data_Preparation.remove_background(self,file_name =f_name)
-            except:
-                pass                
+                for r in range(0, math.ceil(im.shape[0]), image_size_pixels):
+                    for c in range(0, math.ceil(im.shape[1]), image_size_pixels):
+                        f_name = name.split('/')[-1].split('.')[0] + f"_{r}_{c}.jpg"
+                        cv2.imwrite(str(f_name), im[r:r + image_size_pixels, c:c + image_size_pixels, :])
+                        if remove_background:
+                            DataPreparation.remove_background(self, file_name=f_name)
+            except (Exception,):
+                pass
 
-        # sys.path.insert(0, parent_dir_path)
 
-    def convert_to_grayscale(self, folder_path,image_directory, remove_background = True):
+    def convert_to_grayscale(self, folder_path, image_directory, remove_background=True):
         imgfiles = glob(f"{folder_path}/*.jpg")
 
         im_list = []
-        # Convert to PIL Imgae
+        # Convert to PIL Image
         for img in imgfiles:
             im_list.append(cv2.imread(img, 1))
-        
+
         if os.path.isdir(image_directory):
             os.chdir(image_directory)
         else:
             os.makedirs(image_directory)
             os.chdir(image_directory)
 
-        for img,name in zip(im_list,imgfiles):
+        for img, name in zip(im_list, imgfiles):
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             f_name = "gray_" + name.split('\\')[1]
             try:
                 cv2.imwrite(f_name, gray)
-            except:
+            except (Exception,):
                 pass
             if remove_background:
-                Data_Preparation.remove_background(self,file_name =f_name)
-        # sys.path.insert(0, parent_dir_path)
+                DataPreparation.remove_background(self, file_name=f_name)
 
-    def remove_image_with_empty_pixels(self, folder_path, max_percentage_empty_space = 20):
+    def remove_image_with_empty_pixels(self, folder_path, max_percentage_empty_space=20):
         imgfiles = glob(f"{folder_path}/*.jpg")
 
         if os.path.isdir(folder_path):
             os.chdir(folder_path)
         else:
-            print("ERROR!!")
+            print("ERROR!")
 
         for f_name in tqdm(imgfiles):
             empty = 0
@@ -137,88 +133,89 @@ class Data_Preparation:
             width, height = img.width, img.height
             total = width * height
             for pixel in img.getdata():
-                if pixel == (0,0,0,0) or pixel == (0,0,0):            
+                if pixel == (0, 0, 0, 0) or pixel == (0, 0, 0):
                     empty += 1
-            percent = round((empty * 100.0/total),1)
-            if(percent >= max_percentage_empty_space):            
+            percent = round((empty * 100.0 / total), 1)
+            if percent >= max_percentage_empty_space:
                 os.remove(f_name.split('\\')[1])
-        # sys.path.insert(0, parent_dir_path)
 
-    def get_image_dataset(self,f_path,  transform_data =  None ):
+    def get_image_dataset(self, f_path, transform_data=None):
         if not transform_data:
             transform_data = transforms.Compose([transforms.ToTensor()])
-        # transform_data= transforms.Compose([transforms.ToTensor(), transforms.Grayscale(num_output_channels=1)])
-        dataset = Image_Loader.Hirise_Image_Dataset(path_to_images = f_path, transform = transform_data)
+        dataset = Image_Loader.HiriseImageDataset(path_to_images=f_path, transform=transform_data)
 
         return dataset
 
     def get_train_test_val_tensors(self, dataset):
-            m=len(dataset.train_dataset)
+        m = len(dataset.train_dataset)
 
-            train_ds, val_ds = random_split(dataset.train_dataset, [math.floor(m-m*0.2), math.ceil(m*0.2)])
-            # ------------------Training Data ----------------------------------------------
-            # Empty lists to store the training data
-            train_list = []
-            # Append from the MedicalMNIST Object the training target and labels
-            for data in train_ds:
-                train_list.append(data[0])
+        train_ds, val_ds = random_split(dataset.train_dataset, [math.floor(m - m * 0.2), math.ceil(m * 0.2)])
+        # Training Data
+        # Empty lists to store the training data
+        train_list = []
+        # Append from the MedicalMNIST Object the training target and labels
+        for data in train_ds:
+            train_list.append(data[0])
 
-            train_tensor = torch.Tensor(len(train_list))
-            try :
-                torch.cat(train_list,out = train_tensor)
-            except :
-                pass
-            # ------------------- --- Test Data ---------------------------------------------
-            # Empty lists to store the test data
-            test_list = []
-            for data in dataset.test_dataset:
-                test_list.append(data[0])
+        train_tensor = torch.Tensor(len(train_list))
+        try:
+            torch.cat(train_list, out=train_tensor)
+        except (Exception,):
+            pass
 
-            test_tensor = torch.Tensor(len(test_list))
-            try:
-                torch.cat(test_list,out = test_tensor)
-            except :
-                pass
-            # ------------------- --- Val Data ---------------------------------------------
-            # Empty lists to store the test data
-            val_list = []
-            for data in val_ds:
-                val_list.append(data[0])
+        # Test Data
+        # Empty lists to store the test data
+        test_list = []
+        for data in dataset.test_dataset:
+            test_list.append(data[0])
 
-            val_tensor = torch.Tensor(len(val_list))
+        test_tensor = torch.Tensor(len(test_list))
+        try:
+            torch.cat(test_list, out=test_tensor)
+        except (Exception,):
+            pass
 
-            try:
-                torch.cat(val_list,out = val_tensor)
-            except :
-                pass
-            return  train_tensor, test_tensor, val_tensor
+        # Val Data
+        # Empty lists to store the test data
+        val_list = []
+        for data in val_ds:
+            val_list.append(data[0])
+
+        val_tensor = torch.Tensor(len(val_list))
+
+        try:
+            torch.cat(val_list, out=val_tensor)
+        except (Exception,):
+            pass
+        return train_tensor, test_tensor, val_tensor
 
     def get_dataset_tensor(self, dataset):
-            tensor_list = []
-            # Append from the MedicalMNIST Object the training target and labels
-            for data in dataset.dataset:
-                tensor_list.append(data[0])
+        tensor_list = []
 
-            dataset_tensor = torch.Tensor(len(tensor_list))
-            try :
-                torch.cat(tensor_list,out = dataset_tensor)
-            except :
-                pass
-   
-            return  dataset_tensor
+        for data in dataset.dataset:
+            tensor_list.append(data[0])
 
-    def get_train_test_val_dataloader(self, train_data, test_data, val_data,  b_size = 128):
+        dataset_tensor = torch.Tensor(len(tensor_list))
+        try:
+            torch.cat(tensor_list, out=dataset_tensor)
+        except (Exception,):
+            pass
+
+        return dataset_tensor
+
+    def get_train_test_val_dataloader(self, train_data, test_data, val_data, b_size=128):
         # Create TorchTensor Datasets containing training_data, testing_data, validation_data
-        training_data = TensorDataset(train_data,train_data.long() )
-        validation_data = TensorDataset(val_data,val_data.long() )
+        training_data = TensorDataset(train_data, train_data.long())
+        validation_data = TensorDataset(val_data, val_data.long())
         testing_data = TensorDataset(test_data, test_data.long())
-        train_loader = DataLoader(dataset = training_data, batch_size=b_size)
-        valid_loader = DataLoader(dataset = validation_data, batch_size=b_size)
-        test_loader = DataLoader(dataset = testing_data, batch_size=b_size,shuffle=True)
-        return train_loader,  test_loader, valid_loader
+        train_loader = DataLoader(dataset=training_data, batch_size=b_size)
+        valid_loader = DataLoader(dataset=validation_data, batch_size=b_size)
+        test_loader = DataLoader(dataset=testing_data, batch_size=b_size, shuffle=True)
+
+        return train_loader, test_loader, valid_loader
 
     def show_training_data(self, dataset, grid_rows=5, grid_columns=5):
-        """ Prints the traning data in a grid"""
+        """ Prints the training data in a grid"""
         # Set up axes and subplots
         fig, axarr = plt.subplots(grid_rows, grid_columns, figsize=(10, 10))
 
@@ -229,20 +226,20 @@ class Data_Preparation:
                 # Generate a random index in the training dataset
                 idx = random.randint(0, len(dataset.train_dataset))
 
-                # Get the sample and target fromthe traiig datasets
-                sample, target  = dataset.train_dataset[idx]
+                # Get the sample and target from the training datasets
+                sample, target = dataset.train_dataset[idx]
 
                 try:
                     # Exception handling - if it is PIL
-                    axarr[i][j].imshow(sample, cmap = "gray")
-                except:
+                    axarr[i][j].imshow(sample, cmap="gray")
+                except (Exception,):
                     # If tensor of shape CHW
-                    axarr[i][j].imshow(sample.permute(1,2,0), cmap = "gray") 
-                # Get the classes of the target data
+                    axarr[i][j].imshow(sample.permute(1, 2, 0), cmap="gray")
+                    # Get the classes of the target data
                 target_name = dataset.dataset.targets[target]
-                # Label each image eith the target name and the class it belongs to
-                axarr[i][j].set_title("%s (%i)"%(target_name, target))
-        # Deine the grid layout and padding
-        
+                # Label each image with the target name and the class it belongs to
+                axarr[i][j].set_title("%s (%i)" % (target_name, target))
+        # Define the grid layout and padding
+
         fig.tight_layout(pad=1)
         plt.show()

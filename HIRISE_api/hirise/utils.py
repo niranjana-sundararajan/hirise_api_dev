@@ -1,14 +1,19 @@
 import pandas as pd
 import requests
-from pprint import pprint
 from bs4 import BeautifulSoup
 
 
 def file_parameters_list():
+    """
+     Function that returns file parameters list
+     """
     return ["FILE_NAME", "REQUIRED_STORAGE_BYTES", "MISSION_PHASE_NAME", "ORBIT_NUMBER"]
 
 
 def image_map_parameters_list():
+    """
+     Function that returns image mapping parameters list
+     """
     return [
         "CENTER_LATITUDE",
         "CENTER_LONGITUDE",
@@ -20,6 +25,9 @@ def image_map_parameters_list():
 
 
 def viewing_parameters_list():
+    """
+     Function that returns viewing parameters list
+     """
     return [
         "INCIDENCE_ANGLE",
         "EMISSION_ANGLE",
@@ -32,6 +40,9 @@ def viewing_parameters_list():
 
 
 def timing_parameters_list():
+    """
+     Function that returns timing parameters list
+     """
     return [
         "MRO:OBSERVATION_START_TIME",
         "START_TIME",
@@ -43,84 +54,24 @@ def timing_parameters_list():
 
 
 def other_parameters_list():
+    """
+     Function that returns scaling factor, offset, center filter wavelength parameters list
+     """
     return ["SCALING_FACTOR", "OFFSET", "CENTER_FILTER_WAVELENGTH"]
 
-def zone_data(zone = None):
-        zones_list = [x for x in range(1,31)]
-        zones_df = pd.DataFrame()
-        zones_df['zone'] = zones_list
-        if zone == 1:
-            ...
-        elif zone == 2:
-            ...
-        elif zone == 3:
-            ...
-        elif zone == 4:
-            ...
-        elif zone == 5:
-            ...
-        elif zone == 6:
-            ...
-        elif zone == 7:
-            ...
-        elif zone == 8:
-            ...
-        elif zone == 9:
-            ...
-        elif zone == 10:
-            ...
-        elif zone == 11:
-            ...
-        elif zone == 12:
-            ...
-        elif zone == 13:
-            ...
-        elif zone == 14:
-            ...
-        elif zone == 15:
-            ...
-        elif zone == 16:
-            ...
-        elif zone == 17:
-            ...
-        elif zone == 18:
-            ...
-        elif zone == 19:
-            ...
-        elif zone == 20:
-            ...
-        elif zone == 21:
-            ...
-        elif zone == 22:
-            ...
-        elif zone == 23:
-            ...
-        elif zone == 24:
-            ...
-        elif zone == 25:
-            ...
-        elif zone == 26:
-            ...
-        elif zone == 27:
-            ...
-        elif zone == 28:
-            ...
-        elif zone == 29:
-            ...
-        elif zone == 30:
-            ...
-def LBL_parser(label_url):
 
+
+
+def LBL_parser(label_url):
+    """
+     Function that parses the .LBL file in NASA's Planetary Data System
+     """
     # Get the data from the url
     req = requests.get(label_url, stream=True)
 
     lbl_file = req.text
-    lbl_dict = {}
-    lbl_dict["file_parameters"] = {}
-    lbl_dict["image_map_parameters"] = {}
-    lbl_dict["viewing_parameters"] = {}
-    lbl_dict["timing_parameters"] = {}
-    lbl_dict["other_parameters"] = {}
+    lbl_dict = {"file_parameters": {}, "image_map_parameters": {}, "viewing_parameters": {}, "timing_parameters": {},
+                "other_parameters": {}}
 
     # Select the parameters to save
     file_parameters = file_parameters_list()
@@ -162,10 +113,11 @@ def LBL_parser(label_url):
 
     return lbl_dict
 
-def make_cookies(cookie_dict: dict) -> str:
-        return "; ".join(f"{k}={v}" for k, v in cookie_dict.items())
 
-def get_webite_data(base_url, page_key, sub_key=None):
+def get_website_data(base_url, page_key, sub_key=None):
+    """
+     Function that assistes in wescaping the NASA website
+     """
     if sub_key:
         page_url = base_url + str(page_key) + "/" + sub_key
     else:
@@ -182,7 +134,7 @@ def get_webite_data(base_url, page_key, sub_key=None):
     # List to save orbital labels
     page_labels = []
 
-    # Loop through all the orbial ranges
+    # Loop through all the orbital ranges
     for i in range(1, len(labels)):
         # Save orbital labels into a list
         page_labels.append(labels[i]["href"])
@@ -191,6 +143,9 @@ def get_webite_data(base_url, page_key, sub_key=None):
 
 
 def validate_append_float_data(param, list_of_params):
+    """
+     Function that validates floating point data
+     """
     if param:
         list_of_params.append(float(param.split("<")[0]))
     else:
@@ -198,15 +153,12 @@ def validate_append_float_data(param, list_of_params):
 
 
 def append_float_data_without_strip(param, list_of_params):
+    """
+     Function that validates floating point data without stripping the last characters
+     """
     if param:
         list_of_params.append(float(param))
     else:
         list_of_params.append(None)
 
 
-def downloadRange(start_range, end, step):
-    i = start_range
-    while i < end:
-        yield i
-        i += step
-    yield end

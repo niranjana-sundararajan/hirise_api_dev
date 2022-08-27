@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 PCKGNAME = "HIRISEimgs"
-VERSION = '0.0.0.0.dev52'
+VERSION = '0.0.0.0.dev54'
 DESCRIPTION = 'HIRISE Image data and information'
 
 # Setting up

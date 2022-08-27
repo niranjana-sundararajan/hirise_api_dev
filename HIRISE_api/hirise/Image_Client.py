@@ -1,56 +1,56 @@
-from matplotlib.pyplot import text
-import requests, json
 from bs4 import BeautifulSoup
-from pprint import pprint
-import pandas as pd
-import torch
 from tqdm import tqdm
-
-from datetime import datetime
-import os, sys
 from pathlib import Path
+
+import requests
+import pandas as pd
+import os
+import sys
 import pkg_resources
 import shutil
 import random
+
+# ---------------------------------------------------------------------------------------------------------------------
 # Define the current and parent directories and paths
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 
+# ---------------------------------------------------------------------------------------------------------------------
 if __package__ is None or __package__ == "":
     # uses current directory visibility
     import Hirise_Image
     import utils
-
+    # Load CSV files
     CSV_FILE_PATH = "./HIRISE_api/hirise/hirise_data.csv"
     THEME_FILE_PATH = "./HIRISE_api/hirise/theme_data.csv"
 else:
     # uses current package visibility
     from . import Hirise_Image
     from . import utils
-
+    # Load CSV Files
     CSV_FILE_PATH = pkg_resources.resource_filename("hirise", "hirise_data.csv")
     THEME_FILE_PATH = pkg_resources.resource_filename("hirise", "theme_data.csv")
 
-
-class Image_Client:
-
+# --------------------------------------------------------------------------------------------------------------------
+class ImageClient:
 
     def download_database(self, folder_path):
+        """Function that downloads the current database available in the HIRISE Package"""
         shutil.copyfile(CSV_FILE_PATH, folder_path)
 
     def get_images(
-        self,
-        local_database_path=False,
-        file_name=None,
-        orbit_number=None,
-        center_latitude=None,
-        center_longitude=None,
-        maximum_latitude=None,
-        minimum_latitude=None,
-        easternmost_longitude=None,
-        westernmost_longitude=None,
+            self,
+            local_database_path=False,
+            file_name=None,
+            orbit_number=None,
+            center_latitude=None,
+            center_longitude=None,
+            maximum_latitude=None,
+            minimum_latitude=None,
+            easternmost_longitude=None,
+            westernmost_longitude=None,
     ):
-        """Function that querys the database and gets the image according to the given query"""
+        """Function that queries the database and gets the image according to the given query"""
         # Read from the database
         if local_database_path:
             hirise_df = pd.read_csv(local_database_path)
@@ -80,18 +80,21 @@ class Image_Client:
         f_names = [str(x) for x in queried_rows_df["FILE_NAME"]]
 
         # Create HIRISE img object outputs using the hirise_img class
-        Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in f_names]
+        Hirise_img_objects = [Hirise_Image.HiriseImage(f_name) for f_name in f_names]
 
         return Hirise_img_objects
-
+    
+    # ----------------------------------------------------------------------------------------------------------------
+    # Filter Images Based on Image Parameters
+    # ----------------------------------------------------------------------------------------------------------------
     def filter_center_latlon(
-        self,
-        local_database_path=False,
-        center_latlon=None,
-        center_lat=None,
-        center_lon=None,
+            self,
+            local_database_path=False,
+            center_latlon=None,
+            center_lat=None,
+            center_lon=None,
     ):
-
+        """Function that ret the current database available in the HIRISE Package"""
         if local_database_path:
             hirise_df = pd.read_csv(local_database_path)
         else:
@@ -102,28 +105,28 @@ class Image_Client:
             queried_rows_df = hirise_df[
                 (hirise_df["CENTER_LATITUDE"] == lat)
                 & (hirise_df["CENTER_LONGITUDE"] == lon)
-            ]
+                ]
         else:
             queried_rows_df = hirise_df[
                 (hirise_df["CENTER_LATITUDE"] == center_lat)
                 | (hirise_df["CENTER_LONGITUDE"] == center_lon)
-            ]
+                ]
 
         # Filenames extracted from the queried dataframe
         f_names = [str(x) for x in queried_rows_df["FILE_NAME"]]
 
         # Create HIRISE img object outputs using the hirise_img class
-        Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in f_names]
+        Hirise_img_objects = [Hirise_Image.HiriseImage(f_name) for f_name in f_names]
 
         return Hirise_img_objects
 
     def filter_latlon(
-        self,
-        maxmin_lat,
-        eastwest_lon,
-        local_database_path=False,
+            self,
+            maxmin_lat,
+            eastwest_lon,
+            local_database_path=False,
     ):
-
+        """Function that returns HIRISE image object filtered based on maximum ranges of latitudes and/or east-west longitudes given by user """
         if local_database_path:
             hirise_df = pd.read_csv(local_database_path)
         else:
@@ -136,19 +139,20 @@ class Image_Client:
             & (hirise_df["MINIMUM_LATITUDE"].abs() >= min_lat)
             & (hirise_df["EASTERNMOST_LONGITUDE"] >= east_lon)
             & (hirise_df["WESTERNMOST_LONGITUDE"] >= west_lon)
-        ]
+            ]
 
         # Filenames extracted from the queried dataframe
         f_names = [str(x) for x in queried_rows_df["FILE_NAME"]]
 
         # Create HIRISE img object outputs using the hirise_img class
-        Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in f_names]
+        Hirise_img_objects = [Hirise_Image.HiriseImage(f_name) for f_name in f_names]
 
         return Hirise_img_objects
 
     def filter_local_time(
-        self, local_database_path=False, time=None, round_to=0, time_range=None
+            self, local_database_path=False, time=None, round_to=0, time_range=None
     ):
+        """Function that returns HIRISE image object filtered based on local time entered by the user"""
         # Read from the database
 
         if local_database_path:
@@ -160,7 +164,7 @@ class Image_Client:
             t1, t2 = time_range
             queried_rows_df = hirise_df[
                 (hirise_df["LOCAL_TIME"] > t1) & (hirise_df["LOCAL_TIME"] < t2)
-            ]
+                ]
         else:
             queried_rows_df = hirise_df[hirise_df["LOCAL_TIME"].round(round_to) == time]
 
@@ -168,11 +172,13 @@ class Image_Client:
         f_names = [str(x) for x in queried_rows_df["FILE_NAME"]]
 
         # Create HIRISE img object outputs using the hirise_img class
-        Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in f_names]
+        Hirise_img_objects = [Hirise_Image.HiriseImage(f_name) for f_name in f_names]
 
         return Hirise_img_objects
 
     def filter_mission_phase(self, mission_phase, local_database_path=False):
+        """Function that returns HIRISE image object filtered based on mission phase(s) entered by the user"""
+
         # Read from the database
 
         if local_database_path:
@@ -186,11 +192,12 @@ class Image_Client:
         f_names = [str(x) for x in queried_rows_df["FILE_NAME"]]
 
         # Create HIRISE img object outputs using the hirise_img class
-        Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in f_names]
+        Hirise_img_objects = [Hirise_Image.HiriseImage(f_name) for f_name in f_names]
 
         return Hirise_img_objects
 
     def filter_orbital_range(self, orbital_range, local_database_path=False):
+        """Function that returns HIRISE image object filtered based on orbital range entered by the user"""
         # Read from the database
 
         if local_database_path:
@@ -204,14 +211,17 @@ class Image_Client:
         f_names = [str(x) for x in queried_rows_df["FILE_NAME"]]
 
         # Create HIRISE img object outputs using the hirise_img class
-        Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in f_names]
+        Hirise_img_objects = [Hirise_Image.HiriseImage(f_name) for f_name in f_names]
 
         return Hirise_img_objects
 
+    # ----------------------------------------------------------------------------------------------------------------
+    # Download Images and Reloads Local Database
+    # ----------------------------------------------------------------------------------------------------------------
     def reload_database(
-        self, mission_phases, folder_path=None, append=True, download_batch_size=None
+            self, mission_phases, folder_path=None, append=True, download_batch_size=None
     ):
-        """Function that webscrapes and downloads the meta data into csv for the config files"""
+        """Function that webscrapes and downloads the metadata into csv for the config files"""
 
         cols = [
             "FILE_NAME",
@@ -261,7 +271,7 @@ class Image_Client:
         if isinstance(mission_phases, str):
             mission_phases = [mission_phases]
         elif all(
-            isinstance(item, str) for item in mission_phases
+                isinstance(item, str) for item in mission_phases
         ):  # check iterable for stringness of all items. Will raise TypeError if item is not iterable
             pass
         else:
@@ -279,41 +289,41 @@ class Image_Client:
 
         for mission_phase in tqdm(mission_phases):
 
-            orbital_labels, len_orbitals = utils.get_webite_data(
+            orbital_labels, len_orbitals = utils.get_website_data(
                 base_url, mission_phase
             )
 
             for orbits in orbital_labels:
 
-                observation_labels, len_observation_labels = utils.get_webite_data(
+                observation_labels, len_observation_labels = utils.get_website_data(
                     base_url, mission_phase, orbits
                 )
                 for observation in observation_labels:
                     # Build the image and label url
                     label_url = (
-                        base_url
-                        + mission_phase
-                        + "/"
-                        + orbits
-                        + observation
-                        + observation.split("/")[0]
-                        + "_COLOR.LBL"
+                            base_url
+                            + mission_phase
+                            + "/"
+                            + orbits
+                            + observation
+                            + observation.split("/")[0]
+                            + "_COLOR.LBL"
                     )
                     label_url_list.append(label_url)
                     image_url = (
-                        base_url
-                        + mission_phase
-                        + "/"
-                        + orbits
-                        + observation
-                        + observation.split("/")[0]
-                        + "_COLOR.JP2"
+                            base_url
+                            + mission_phase
+                            + "/"
+                            + orbits
+                            + observation
+                            + observation.split("/")[0]
+                            + "_COLOR.JP2"
                     )
                     image_url_list.append(image_url)
                     orbital_range = (
-                        str(orbits.split("_")[1].lstrip("0"))
-                        + " - "
-                        + str(orbits.split("_")[2].lstrip("0")[:-1])
+                            str(orbits.split("_")[1].lstrip("0"))
+                            + " - "
+                            + str(orbits.split("_")[2].lstrip("0")[:-1])
                     )
                     try:
                         orbital_range_list.append(orbital_range)
@@ -361,8 +371,8 @@ class Image_Client:
             offset_list = []
             wavelength_list = []
             for label_url in label_url_list[
-                download_range_list[i] : download_range_list[i + 1]
-            ]:
+                             download_range_list[i]: download_range_list[i + 1]
+                             ]:
 
                 try:
                     parsed_label = utils.LBL_parser(label_url)
@@ -457,8 +467,8 @@ class Image_Client:
             hirise_dataframe["MISSION_PHASE_NAME"] = mission_phase_list
             hirise_dataframe["ORBIT_NUMBER"] = orbital_number_list
             hirise_dataframe["ORBITAL_RANGE"] = orbital_range_list[
-                download_range_list[i] : download_range_list[i + 1]
-            ]
+                                                download_range_list[i]: download_range_list[i + 1]
+                                                ]
 
             hirise_dataframe["CENTER_LATITUDE"] = center_latitude_list
             hirise_dataframe["CENTER_LONGITUDE"] = center_longitude_list
@@ -486,11 +496,11 @@ class Image_Client:
             hirise_dataframe["OFFSET"] = offset_list
             hirise_dataframe["CENTER_FILTER_WAVELENGTH"] = wavelength_list
             hirise_dataframe["IMG_URL"] = image_url_list[
-                download_range_list[i] : download_range_list[i + 1]
-            ]
+                                          download_range_list[i]: download_range_list[i + 1]
+                                          ]
             hirise_dataframe["LABEL_URL"] = label_url_list[
-                download_range_list[i] : download_range_list[i + 1]
-            ]
+                                            download_range_list[i]: download_range_list[i + 1]
+                                            ]
 
             if __package__ is None or __package__ == "":
                 hirise_dataframe.to_csv(
@@ -508,7 +518,7 @@ class Image_Client:
             hirise_dataframe = pd.DataFrame()
 
     def download(self, Hiriseimg_objs, folder_path, data_reload=True):
-
+        """Function that downloads HIRISE image object entered by the user"""
         if os.path.exists(folder_path) and data_reload:
             # Delete existing files in the directory
             [f.unlink() for f in Path(folder_path).glob("*") if f.is_file()]
@@ -540,8 +550,9 @@ class Image_Client:
         sys.path.insert(0, parent_dir_path)
 
     def download_random_images(
-        self, fol_path, image_count=1, local_database_path=False
+            self, fol_path, image_count=1, local_database_path=False
     ):
+        """Function that downloads random HIRISE images from the local or config database based on number of images entered by the user"""
         if local_database_path:
             hirise_df = pd.read_csv(local_database_path)
         else:
@@ -553,15 +564,16 @@ class Image_Client:
         f_names = [str(x) for x in random_samples["FILE_NAME"]]
 
         # Create HIRISE img object outputs using the hirise_img class
-        Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in f_names]
+        Hirise_img_objects = [Hirise_Image.HiriseImage(f_name) for f_name in f_names]
 
-        Image_Client.download(
+        ImageClient.download(
             self, Hiriseimg_objs=Hirise_img_objects, folder_path=fol_path
         )
 
     def reload_science_theme_database(
-                self, science_themes, image_count = 1,user_name = 'niranjana',password = 'B2bcTFp!5AtEAs5'
+            self, science_themes, image_count=1, user_name='niranjana', password='B2bcTFp!5AtEAs5'
     ):
+        """Function that updates or downloads the science theme database"""
         cols = [
             "FILE_NAME",
             "SCIENCE_THEME"]
@@ -570,7 +582,7 @@ class Image_Client:
         if isinstance(science_themes, str):
             science_themes = [science_themes]
         elif all(
-            isinstance(item, str) for item in science_themes
+                isinstance(item, str) for item in science_themes
         ):  # check iterable for stringness of all items. Will raise TypeError if item is not iterable
             pass
         else:
@@ -579,33 +591,32 @@ class Image_Client:
         # Define the urls needed for the downloads
         login_url = "https://www.uahirise.org/hiwish/login"
         payload = {
-        'username': user_name,
-        'password': password
+            'username': user_name,
+            'password': password
         }
-
 
         for theme in science_themes:
             # Login to the website
             science_theme_list = {
-             "Climate Change" : "1",
-             "Eolian Process" : "2",
-             "Fluvial Process" : "3",
-            "Future Exploration/Landing Sites": "4", 
-            "Geologic Contacts/Stratigraphy" : "5",
-            "Glacial/Periglacial Processes" :"6",
-            "Hydrothermal Processes" :"7",
-            "Impact Process" : "8",
-            "Landscape Evolution" :"9",
-            "Mass Wasting Processes" :"10",
-             "Polar Geology" :"11",
-             "Seasonal Processes" :"12",
-             "Sedimentary/Layering Processes" :"13",
-             "Rocks and Regolith": "14",
-             "Composition and Photometry" : "15",
-              "Tectonic Processes" : "16",
-              "Volcanic Processes" : "17",
-              "Other" : "18"
-        }
+                "Climate Change": "1",
+                "Eolian Process": "2",
+                "Fluvial Process": "3",
+                "Future Exploration/Landing Sites": "4",
+                "Geologic Contacts/Stratigraphy": "5",
+                "Glacial/Periglacial Processes": "6",
+                "Hydrothermal Processes": "7",
+                "Impact Process": "8",
+                "Landscape Evolution": "9",
+                "Mass Wasting Processes": "10",
+                "Polar Geology": "11",
+                "Seasonal Processes": "12",
+                "Sedimentary/Layering Processes": "13",
+                "Rocks and Regolith": "14",
+                "Composition and Photometry": "15",
+                "Tectonic Processes": "16",
+                "Volcanic Processes": "17",
+                "Other": "18"
+            }
             with requests.Session() as connection:
 
                 connection.post(login_url, data=payload)
@@ -625,7 +636,7 @@ class Image_Client:
                 for i in range(len(rows)):
                     labels_list.append(rows[i].find_all("a"))
 
-                titles_list = []    
+                titles_list = []
                 for label in labels_list:
                     for i in range(len(label)):
                         titles_list.append(label[i]["title"])
@@ -634,12 +645,12 @@ class Image_Client:
                 for obs in observations:
                     select_row = hirise_df[hirise_df["FILE_NAME"].str.contains(obs) == True]
                     string_fname = select_row["FILE_NAME"].tolist()
-                    if string_fname!= []:
+                    if string_fname != []:
                         string_fname = string_fname[0]
 
                         observation_list.append(string_fname)
                         science_theme_list.append(theme)
-                            # Add lists to dataframe
+                        # Add lists to dataframe
                 themes_dataframe["FILE_NAME"] = observation_list
                 themes_dataframe["SCIENCE_PHASE"] = science_theme_list
 
@@ -657,7 +668,8 @@ class Image_Client:
                     )
                 themes_dataframe = pd.DataFrame()
 
-    def filter_science_theme(self, science_theme, image_count = 15, local_database_path=False):
+    def filter_science_theme(self, science_theme, image_count=15, local_database_path=False):
+        """Function that returns HIRISE image object filtered based on  science theme entered by the user"""
         cols = [
             "FILE_NAME",
             "SCIENCE_THEME"]
@@ -665,24 +677,26 @@ class Image_Client:
             theme_df = pd.read_csv(THEME_FILE_PATH, names=cols)
         else:
             theme_df = pd.read_csv(THEME_FILE_PATH, names=cols)
-        
+
         selected_theme_df = theme_df[theme_df['SCIENCE_THEME'] == science_theme]
         random_samples = selected_theme_df.sample(n=image_count)
-        
 
         # Filenames extracted from the queried dataframe
         f_names = [str(x) for x in random_samples["FILE_NAME"]]
 
         # Create HIRISE img object outputs using the hirise_img class
-        Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in f_names]
+        Hirise_img_objects = [Hirise_Image.HiriseImage(f_name) for f_name in f_names]
 
         return Hirise_img_objects
 
-    def filter_by_title(self, title_keywords, image_count = None,return_titles = False,user_name = 'niranjana',password = 'B2bcTFp!5AtEAs5'):
+    def filter_by_title(self, title_keywords, image_count=None, return_titles=False, user_name='niranjana',
+                        password='B2bcTFp!5AtEAs5'):
+
+        """Function that returns HIRISE image object filtered based on title of the image entered by the user"""
         login_url = "https://www.uahirise.org/hiwish/login"
         payload = {
-        'username': user_name,
-        'password': password
+            'username': user_name,
+            'password': password
         }
         with requests.Session() as connection:
             connection.post(login_url, data=payload)
@@ -714,7 +728,7 @@ class Image_Client:
             for i in range(len(rows)):
                 labels_list.append(rows[i].find_all("a"))
 
-            titles_list = []    
+            titles_list = []
             for label in labels_list:
                 for i in range(len(label)):
                     titles_list.append(label[i]["title"])
@@ -723,37 +737,18 @@ class Image_Client:
             for obs in observations:
                 select_row = hirise_df[hirise_df["FILE_NAME"].str.contains(obs) == True]
                 string_fname = select_row["FILE_NAME"].tolist()
-                if string_fname!= []:
+                if string_fname != []:
                     string_fname = string_fname[0]
 
                     observation_list.append(string_fname)
-                        # Add lists to dataframe            
+                    # Add lists to dataframe
                     # Create HIRISE img object outputs using the hirise_img class
             if image_count:
                 random_samples = random.sample(observation_list, image_count)
-            Hirise_img_objects = [Hirise_Image.Hirise_Image(f_name) for f_name in random_samples]   
-        # Return to parent directory
-            
+            Hirise_img_objects = [Hirise_Image.HiriseImage(f_name) for f_name in random_samples]
+            # Return to parent directory
+
             if return_titles:
-                    return Hirise_img_objects,description_list
+                return Hirise_img_objects, description_list
             else:
                 return Hirise_img_objects
-
-imc = Image_Client()
-# imc.download_random_images(fol_path="./download-data", image_count=10)
-
-# hobjs = imc.filter_science_theme(science_theme="Eolian Process")
-# hobjs = imc.filter_science_theme(science_theme="Fluvial Process")
-# hobjs = imc.filter_science_theme(science_theme="Impact Process")
-# hobjs = imc.filter_science_theme(science_themebbb="Rocks and Regolith")
-# hobjs = imc.filter_science_theme(science_theme="Volcanic Processes")
-
-list_titles = ['Pedestal crater Impact Processes']
-# ['pedestal crater']
-    # 'gullies']
-# , 'pedestal crater', 'ridges','']
-# # ,'cratered cones', 'lava flow']
-
-for title in list_titles:
-    hobjs = imc.filter_by_title(title_keywords= title, image_count=5)
-    imc.download(Hiriseimg_objs = hobjs, folder_path= f'download-data-batch/{title}', data_reload=False)
