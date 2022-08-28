@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import setuptools_scm
 
 PCKGNAME = "HIRISEimgs"
 DESCRIPTION = 'HIRISE Image data and information'
