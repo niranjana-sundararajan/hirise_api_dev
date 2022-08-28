@@ -16,4 +16,4 @@ jobs:
         with:
           repository_url: https://test.pypi.org/legacy/.
           password: ${{ secrets.PYPI_ACCESS_TOKEN }}
-          packages_dir: HIRISE_api/dist
+          packages_dir: dist
