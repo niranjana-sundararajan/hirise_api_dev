@@ -88,7 +88,7 @@ def print_confusion_matrix(folder_path, test_labels, translated_values_array, fi
     # Generate a dataframe for the confusion matrix
     df_cm = pd.DataFrame(cm)
 
-    # Plot figures
+    # Plot figures using matplot
     plt.figure(figsize=fig_size)
     sns.heatmap(df_cm, annot=True, xticklabels=class_names, yticklabels=class_names)
     plt.ylabel("Original Labels")
