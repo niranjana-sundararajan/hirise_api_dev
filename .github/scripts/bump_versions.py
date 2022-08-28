@@ -37,7 +37,7 @@ def generate_patched_version_github_release():
 
     except subprocess.CalledProcessError as err:
         if err.stderr.decode("utf8").startswith("HTTP 404:"):
-            new_release_number = "0.0.0"
+            new_release_number = "0.0.1"
         else:
             raise Exception("Unable to generate new version number")
     else:
