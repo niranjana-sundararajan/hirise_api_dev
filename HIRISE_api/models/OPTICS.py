@@ -7,9 +7,14 @@ import matplotlib.pyplot as plt
 
 
 def OPTICS_analysis(dataframe, eps=0.5, min_samples=15, plot=False, verbose=False, fig_size=(10, 7)):
+    """
+     Function that uses as input the encoded image samples and clusters the data using  Ordering Points To Identify Cluster Structure Method.
+     The user must specify the eps and minimum number of samples which are the tuning parameter for OPTICS.
+     """
+    # Standardize the encoded samples
     X = StandardScaler().fit_transform(dataframe)
 
-    # define the model
+    # Instantiate the model
     optics_model = OPTICS(eps=eps, min_samples=min_samples)
     # assign each data point to a cluster
     optics_result = optics_model.fit_predict(dataframe)

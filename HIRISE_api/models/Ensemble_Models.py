@@ -1,3 +1,9 @@
+import six
+import sys
+sys.modules['sklearn.externals.six'] = six
+import os
+# -----------------------------------------------------------------------------------------------------------------------------
+
 from mlxtend.classifier import StackingClassifier
 from numpy import mean
 from numpy import std
@@ -11,53 +17,49 @@ from sklearn.cluster import AffinityPropagation
 from sklearn.cluster import KMeans
 from hdbscan import HDBSCAN
 from sklearn.preprocessing import StandardScaler
-
-import six
-import sys
-import os
 import matplotlib.pyplot as plt
+# -----------------------------------------------------------------------------------------------------------------------------
 
-sys.modules['sklearn.externals.six'] = six
 
 # Define the current and parent directories and paths
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 
+# -----------------------------------------------------------------------------------------------------------------------------
 if __package__ is None or __package__ == '':
     # uses current directory visibility
     import utils
 else:
     from . import utils
 
-
+# -----------------------------------------------------------------------------------------------------------------------------
 def get_models(models_name_list_string, translated_models_list):
     models = dict()
     for name, mod in zip(models_name_list_string, translated_models_list):
         models[name] = mod
     return models
 
-
+# -----------------------------------------------------------------------------------------------------------------------------
+#  WRAPPING CLASSES FOR INPUTS INTO ENSEMBLE MODELS
+# -----------------------------------------------------------------------------------------------------------------------------
 class AgglomerativeClusteringWrapper(AgglomerativeClustering):
     def predict(self, X):
         return self.fit_predict(X)
-
-
 class OpticsWrapper(OPTICS):
     def predict(self, X):
         return self.fit_predict(X)
-
-
 class DBSCANWrapper(DBSCAN):
     def predict(self, X):
         return self.fit_predict(X)
-
-
 class HDBSCANWrapper(HDBSCAN):
     def predict(self, X):
         return self.fit_predict(X)
 
-
+# -----------------------------------------------------------------------------------------------------------------------------
 def get_stacking(discovery=False, all_models=True):
+    """
+     Function that stacks specified models together as an input to the ensemble model.
+     """
     if discovery:
         affinity = AffinityPropagation(damping=0.7)
         affinity._estimator_type = "classifier"
@@ -83,9 +85,11 @@ def get_stacking(discovery=False, all_models=True):
     model = StackingClassifier(classifiers=estimators, meta_classifier=meta_learner)
     return model
 
-
-# get a list of models to evaluate
+# -----------------------------------------------------------------------------------------------------------------------------
 def get_models(discovery=False):
+    """
+     Function that defines specified models as an input to the ensemble model.
+     """
     models = dict()
     if discovery:
         models['dbscan'] = DBSCANWrapper(eps=0.5, min_samples=5)
@@ -101,9 +105,13 @@ def get_models(discovery=False):
     return models
 
 
-# evaluate a give model using cross-validation
+# -----------------------------------------------------------------------------------------------------------------------------
+
 def evaluate_model(model,translation_dataframe, X, y, classification=False, clustering_model=None, dim_reduction_technique=None,
-                   transfer_learning_model=None):
+                   transfer_learning_model=None, scoring_measure = 'v_measure_score'):
+    """
+     Function that uses cross-validation and evalutes the stacking model.
+     """
     cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=2, random_state=1)
     if classification:
         translation_values = translation_dataframe.TRANSLATION_LIST[
@@ -113,11 +121,11 @@ def evaluate_model(model,translation_dataframe, X, y, classification=False, clus
 
         translated_results = utils.translate_labels(translation_list=list(translation_values), model_results=model)
 
-    scores = cross_val_score(model, X, y, scoring='balanced_accuracy', cv=cv, n_jobs=1, error_score='raise')
+    scores = cross_val_score(model, X, y, scoring=scoring_measure, cv=cv, n_jobs=1, error_score='raise')
     return scores
 
 
-def ensemble_model(encoded_data, labels, models, transfer_learning_model=None, dim_reduction_technique=None,
+def ensemble_model(encoded_data, labels, models, translation_dataframe, transfer_learning_model=None, dim_reduction_technique=None,
                    clustering_model=None, classification=False, plot=False, verbose=False):
     if isinstance(encoded_data, list):
         X_test_list = [StandardScaler().fit_transform(i) for i in encoded_data]
@@ -131,7 +139,7 @@ def ensemble_model(encoded_data, labels, models, transfer_learning_model=None, d
     for X_test in X_test_list[3:]:
         for name, model in models.items():
             # print(X_test.shape, y_test.shape)
-            scores = evaluate_model(model, X_test, y_test)
+            scores = evaluate_model(model = model, X = X_test, y = y_test, translation_dataframe = translation_dataframe,  classification = classification, clustering_model = clustering_model, dim_reduction_technique = dim_reduction_technique, transfer_learning_model = transfer_learning_model)
             results.append(scores)
             names.append(name)
             if verbose:

@@ -11,21 +11,26 @@ def BIRCH_analysis(encoded_samples, threshold_value, clusters, plot=False, fig_s
      Function that uses as input the encoded image samples and clusters the data using affinity propogation.
      The user must specify the damping factor, which is the tuning parameter for affinity propogation clustering.
      """
+    # Standardize the encoded samples
     X = StandardScaler().fit_transform(encoded_samples)
-    # define the model
+    
+    # Instantiate the model
     birch_model = Birch(threshold=threshold_value, n_clusters=clusters)
 
-    # train the model
+    # Train the model
     birch_model.fit(encoded_samples)
 
-    # assign each data point to a cluster
+    # Assign each data point to a cluster
     birch_result = birch_model.predict(encoded_samples)
 
-    # get all the unique clusters
+    # Get all the unique clusters
     birch_clusters = unique(birch_result)
+
+    # Display additional information, if specified
     if verbose:
         print("Number of Clusters : ", len(birch_clusters))
 
+    # Plotting, if specified 
     if plot:
         labels = [f"Cluster {i}" for i in range(len(birch_result))]
         plt.figure(figsize=fig_size)

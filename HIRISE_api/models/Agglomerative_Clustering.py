@@ -11,17 +11,19 @@ def agglomerative_clustering_analysis(encoded_samples, clusters, plot=False, fig
      Function that uses as input the encoded image samples and clusters the data using agglomerative clustering.
      The user must specify the number of clusters, which is a parameter for agglomerative clustering.
      """
-    # define the model
+    # Standardize the encoded samples
     X = StandardScaler().fit_transform(encoded_samples)
 
+    # Instantiate the model
     agglomerative_model = AgglomerativeClustering(n_clusters=clusters)
 
-    # assign each data point to a cluster
+    # Assign each data point to a cluster
     agglomerative_result = agglomerative_model.fit_predict(encoded_samples)
 
-    # get all the unique clusters
+    # Get all the unique clusters
     agglomerative_clusters = unique(agglomerative_result)
 
+    # Plotting, if specified
     if plot:
         labels = [f"Cluster {i}" for i in range(len(agglomerative_clusters))]
         plt.figure(figsize=fig_size)

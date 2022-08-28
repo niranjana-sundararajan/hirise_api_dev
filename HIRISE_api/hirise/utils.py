@@ -162,3 +162,9 @@ def append_float_data_without_strip(param, list_of_params):
         list_of_params.append(None)
 
 
+def downloadRange(start_range, end, step):
+    i = start_range
+    while i < end:
+        yield i
+        i += step
+    yield end

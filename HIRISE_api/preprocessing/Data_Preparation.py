@@ -45,6 +45,7 @@ class DataPreparation:
             cv2.imwrite(file_name, dst)
 
     def resize_image(self, folder_path, resized_images_folder_path, pixel_length_cm=250):
+        # Reduction factor based on NASA's decription of the HIRISE image
         reduce_factor = 25 / pixel_length_cm
         imgfiles = glob(f"{folder_path}/*.IMG")
 
@@ -53,12 +54,14 @@ class DataPreparation:
         for img in tqdm(imgfiles):
             img_list.append(Image.open(img))
 
+        # If folder path is present, change path to folder path, else create folder path
         if os.path.isdir(resized_images_folder_path):
             os.chdir(resized_images_folder_path)
         else:
             os.makedirs(resized_images_folder_path)
             os.chdir(resized_images_folder_path)
 
+        # For each image in folder, resize image
         for im, name in tqdm(zip(img_list, imgfiles)):
             resized_im = im.resize((round(im.size[0] * reduce_factor), round(im.size[1] * reduce_factor)))
             try:
@@ -67,21 +70,29 @@ class DataPreparation:
                 pass
 
     def tile_images(self, folder_path, image_directory, image_size_pixels, resized=True, remove_background=True):
+        """
+        Preprocessing function that tiles large images based on the size specified by the user
+        """
+
+        # Check if the files are resizedor in the original format
         if resized:
             imgfiles = glob(f"{folder_path}/*.jpg")
         else:
             imgfiles = glob(f"{folder_path}/*.IMG")
+
         # Convert to PIL Image
         img_list = []
         for img in imgfiles:
             img_list.append(Image.open(img))
 
+        # If folder path is present, change path to folder path, else create folder path
         if os.path.isdir(image_directory):
             os.chdir(image_directory)
         else:
             os.makedirs(image_directory)
             os.chdir(image_directory)
-
+        
+        # For each image, check size and tile acordingly
         for img, name in tqdm(zip(img_list, imgfiles)):
             try:
                 im = np.asarray(img)
@@ -96,6 +107,9 @@ class DataPreparation:
 
 
     def convert_to_grayscale(self, folder_path, image_directory, remove_background=True):
+        """
+        Preprocessing function that converts images into grayscale images
+        """
         imgfiles = glob(f"{folder_path}/*.jpg")
 
         im_list = []
@@ -120,26 +134,44 @@ class DataPreparation:
                 DataPreparation.remove_background(self, file_name=f_name)
 
     def remove_image_with_empty_pixels(self, folder_path, max_percentage_empty_space=20):
+        """
+        Preprocessing function that removes tiled images with a specified percentage of empty pixels, to avoid noise in the dataset
+        """
+        # Get file names
         imgfiles = glob(f"{folder_path}/*.jpg")
 
+        # If folder not present, throw error
         if os.path.isdir(folder_path):
             os.chdir(folder_path)
         else:
             print("ERROR!")
 
+        # Extract and check each image in the folder for their % emoty space
         for f_name in tqdm(imgfiles):
             empty = 0
-            img = Image.open(f_name.split('\\')[1])
+            try:
+                img = Image.open(f_name.split('\\')[-1])
+            except:
+                img = Image.open(f_name.split('/')[-1])
+
             width, height = img.width, img.height
             total = width * height
             for pixel in img.getdata():
                 if pixel == (0, 0, 0, 0) or pixel == (0, 0, 0):
                     empty += 1
             percent = round((empty * 100.0 / total), 1)
+
+            # Remove images that have empty sapce above specified amount
             if percent >= max_percentage_empty_space:
-                os.remove(f_name.split('\\')[1])
+                try:
+                    os.remove(f_name.split('\\')[1])
+                except:
+                    os.remove(f_name)
 
     def get_image_dataset(self, f_path, transform_data=None):
+        """
+        Function that returns the pytorch Image Loader dataset for images in a specified folder path
+        """
         if not transform_data:
             transform_data = transforms.Compose([transforms.ToTensor()])
         dataset = Image_Loader.HiriseImageDataset(path_to_images=f_path, transform=transform_data)
@@ -147,10 +179,16 @@ class DataPreparation:
         return dataset
 
     def get_train_test_val_tensors(self, dataset):
-        m = len(dataset.train_dataset)
+        """
+        Function that returns the pytorch tensors for train, test and validation data with dataset a Imageloader dataset as the input
+        """
 
+        # Split the dataset into training and validation 
+        m = len(dataset.train_dataset)
         train_ds, val_ds = random_split(dataset.train_dataset, [math.floor(m - m * 0.2), math.ceil(m * 0.2)])
-        # Training Data
+
+
+        # Training Data -------------------------------------------------------------------------------------
         # Empty lists to store the training data
         train_list = []
         # Append from the MedicalMNIST Object the training target and labels
@@ -163,7 +201,7 @@ class DataPreparation:
         except (Exception,):
             pass
 
-        # Test Data
+        # Test Data ------------------------
         # Empty lists to store the test data
         test_list = []
         for data in dataset.test_dataset:
@@ -175,7 +213,7 @@ class DataPreparation:
         except (Exception,):
             pass
 
-        # Val Data
+        # Validaton data ------------------
         # Empty lists to store the test data
         val_list = []
         for data in val_ds:
@@ -204,10 +242,14 @@ class DataPreparation:
         return dataset_tensor
 
     def get_train_test_val_dataloader(self, train_data, test_data, val_data, b_size=128):
+        """
+        Function that returns the pytorch dataloader for train, test and validation data with batch size as the input parameter
+        """
         # Create TorchTensor Datasets containing training_data, testing_data, validation_data
         training_data = TensorDataset(train_data, train_data.long())
         validation_data = TensorDataset(val_data, val_data.long())
         testing_data = TensorDataset(test_data, test_data.long())
+        # Create dataloaders
         train_loader = DataLoader(dataset=training_data, batch_size=b_size)
         valid_loader = DataLoader(dataset=validation_data, batch_size=b_size)
         test_loader = DataLoader(dataset=testing_data, batch_size=b_size, shuffle=True)
@@ -215,7 +257,9 @@ class DataPreparation:
         return train_loader, test_loader, valid_loader
 
     def show_training_data(self, dataset, grid_rows=5, grid_columns=5):
-        """ Prints the training data in a grid"""
+        """ 
+        Prints the training images in a defined grid
+        """
         # Set up axes and subplots
         fig, axarr = plt.subplots(grid_rows, grid_columns, figsize=(10, 10))
 
