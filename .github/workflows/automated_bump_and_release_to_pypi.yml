@@ -1,0 +1,12 @@
+name: Generate a new release version and call the publish to pypi workflow
+on: workflow_dispatch
+jobs:
+  github:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create new release version
+        run: .github/scripts/bump_versions.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
