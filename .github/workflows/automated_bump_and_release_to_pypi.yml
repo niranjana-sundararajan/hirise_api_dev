@@ -7,6 +7,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Create new release version
-        run: .github/scripts/bump_versions.py
+        run: chmod u+x ./.github/scripts/bump_versions.py && .github/scripts/bump_versions.py
         env:
           GITHUB_TOKEN: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
