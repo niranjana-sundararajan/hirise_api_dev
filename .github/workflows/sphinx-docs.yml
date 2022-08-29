@@ -36,9 +36,7 @@ jobs:
           sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
           pip install --upgrade pip # make sure accessing from latest PyPi
           pip install -r requirements.txt # make sure all packages installed
-          echo "$(pwd)"
-          cd ..
-          echo "$(pwd)"
+          echo "Current directory is: $(pwd)"
           pip install -e . # install module
           pip install sphinx
    
