@@ -1,8 +1,11 @@
 import numpy as np
 import pkg_resources
-from models import (KMeans, BIRCH, 
-Agglomerative_Clustering, metrics,
-utils as mUtils
+from models import (
+    KMeans, 
+    BIRCH,
+    Agglomerative_Clustering, 
+    metrics,
+    utils as mUtils
 )
 from preprocessing import utils
 from models import (
