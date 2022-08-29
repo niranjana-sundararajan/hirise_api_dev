@@ -121,8 +121,8 @@ class ImageClient:
         if center_latlon is not None:
             lat, lon = center_latlon
             queried_rows_df = hirise_df[
-                (hirise_df["CENTER_LATITUDE"] == lat)
-                & (hirise_df["CENTER_LONGITUDE"] == lon)
+                (hirise_df["CENTER_LATITUDE"] == lat) & 
+                (hirise_df["CENTER_LONGITUDE"] == lon)
             ]
         else:
             queried_rows_df = hirise_df[

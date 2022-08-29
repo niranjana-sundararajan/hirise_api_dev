@@ -114,12 +114,12 @@ def test_metrics_function():
 
     # Import labels file
     labels = utils.read_encoded_csv(LABELS_CSV)
+    test_length = len(
+        metrics.calculate_metrics(
+            model=model_results, labels=labels, verbose=False
+        )
+    )
 
     assert (
-        len(
-            metrics.calculate_metrics(
-                model=model_results, labels=labels, verbose=False
-            )
-        )
-        == 9
+        test_length == 9
     )
