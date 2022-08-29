@@ -15,7 +15,7 @@ setup(
     package_dir= {'' : "HIRISE_api"},
     packages=find_packages(where="HIRISE_api"),
     include_package_data=True ,
-    install_requires=['wheel','humanize', 'requests', 'beautifulsoup4','umap-learn', 'hdbscan','rasterfairy'],
+    install_requires=['wheel','humanize', 'requests', 'beautifulsoup4','umap-learn', 'hdbscan','rasterfairy','pytest'],
     keywords=['python', 'HIRISE', 'NASA', 'PDS', 'API', 'image data'],
     classifiers=[
         "Development Status :: 4 - Beta",
