@@ -6,7 +6,7 @@ numpy
 torch
 torchvision
 opencv-python
-PIL
+Pillow
 rasterfairy
 seaborn
 hdbscan
@@ -18,4 +18,3 @@ twill
 setuptools
 sklearn
 mlxtend
-pytest
