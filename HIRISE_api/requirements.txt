@@ -5,7 +5,6 @@ pandas
 numpy
 torch
 torchvision
-glob
 cv2
 math
 PIL
