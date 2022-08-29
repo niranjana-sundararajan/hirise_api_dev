@@ -1,4 +1,4 @@
-from ..hirise import Hirise_Image, Image_Client
+from hirise import Hirise_Image, Image_Client
 import pkg_resources
 import os
 

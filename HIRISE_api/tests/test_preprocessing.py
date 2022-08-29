@@ -1,6 +1,6 @@
 import pandas as pd
 
-from ..preprocessing import Encoding, Dimension_Reduction, utils
+from preprocessing import Encoding, Dimension_Reduction, utils
 import numpy as np
 import torch
 
