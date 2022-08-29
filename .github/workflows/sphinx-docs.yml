@@ -1,0 +1,66 @@
+# Workflow to update module documentation utilizing Sphinx and Latex
+# Source code modified from:
+# https://github.com/ammaraskar/sphinx-action-test/blob/master/.github/workflows/default.yml
+
+name: sphinx-create-pdf
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ main ]
+
+  # # Allows you to run this workflow manually from the Actions tab
+  # workflow_dispatch:
+
+jobs:
+  sphinx:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout virtual machine to run action
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+      
+      # Install dependencies, specifically LaTeX, Sphinx and the module being documented
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y 
+          sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
+          pip install --upgrade pip # make sure accessing from latest PyPi
+          pip install -r requirements.txt # make sure all packages installed
+          pip install -e . # install module
+          pip install sphinx
+   
+      # Build PDF with Sphinx
+      - name: Build pdf with sphinx
+        run: |
+          sphinx-build -b html docs docs/html 
+          sphinx-build -b latex docs docs/pdf 
+          cd docs/pdf
+          pdflatex armageddon.tex
+          pdflatex armageddon.tex
+
+      # Commit changes to local git repository
+      - name: commit files
+        run: |
+          git status
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add ./docs/pdf/hirise-api.pdf
+          git add ./docs/html/
+          git commit -m "update hirise documentation"
+          git pull --rebase # ensure updates from other workflows incorporated
+
+      # Push changes to current remote git repository
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main

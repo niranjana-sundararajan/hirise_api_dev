@@ -1,0 +1,32 @@
+name: pep8
+
+on:
+   push:
+     branches:
+       - main
+       - '**'
+   pull_request:
+     branches:
+       - main
+
+jobs:
+  pep8: 
+    runs-on: ubuntu-latest 
+
+    steps:
+    - name: Initial Check
+      uses: actions/checkout@v2 
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+        architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+
+    - name: Install dependencies  
+      run: |
+        pip install --upgrade pip
+        pip install flake8
+
+    - name: Lint with flake8
+      run: flake8 .            

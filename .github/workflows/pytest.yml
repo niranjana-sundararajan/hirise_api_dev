@@ -1,0 +1,42 @@
+name: pytest
+on:
+   push:
+     branches:
+       - main
+       - '**'
+   pull_request:
+     branches:
+       - main
+
+jobs:
+  pytest:
+    # Run tests on both linux and windows environments
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Prevent all build to stop if a single one fails
+      fail-fast: false
+      
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout virtual machine to run action
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+
+      # Install dependencies for pytest    
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip # make sure accessing from latest PyPi
+          pip install -r requirements.txt # make sure all packages installed
+      
+      # Run pytest
+      - name: Test with pytest
+        run: |
+          pytest tests
