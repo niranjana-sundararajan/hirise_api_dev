@@ -1,9 +1,9 @@
 import numpy as np
 
-import models
-from ..models import KMeans, BIRCH, Agglomerative_Clustering, metrics
-from ..preprocessing import utils
-from ..models import (
+import HIRISE_api.models as models
+from HIRISE_api.models import KMeans, BIRCH, Agglomerative_Clustering, metrics
+from HIRISE_api.preprocessing import utils
+from HIRISE_api.models import (
     Affinity_Propagation,
     DBSCAN,
     HDBSCAN,
