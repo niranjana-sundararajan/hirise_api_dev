@@ -1,9 +1,9 @@
 import numpy as np
 
 import models
-from models import KMeans, BIRCH, Agglomerative_Clustering, metrics
-from preprocessing import utils
-from models import (
+from ..models import KMeans, BIRCH, Agglomerative_Clustering, metrics
+from ..preprocessing import utils
+from ..models import (
     Affinity_Propagation,
     DBSCAN,
     HDBSCAN,
