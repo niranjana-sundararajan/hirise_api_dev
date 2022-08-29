@@ -34,8 +34,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip # make sure accessing from latest PyPi
-          pip install pytest
-          cd HIRISE_api && pip install -r requirements.txt # make sure all packages installed
+          pip install -r requirements.txt # make sure all packages installed
       
       # Run pytest
       - name: Test with pytest
