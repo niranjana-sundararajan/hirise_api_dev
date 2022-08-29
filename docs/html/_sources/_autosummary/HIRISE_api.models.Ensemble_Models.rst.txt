@@ -1,0 +1,41 @@
+HIRISE\_api.models.Ensemble\_Models
+===================================
+
+.. automodule:: HIRISE_api.models.Ensemble_Models
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      ensemble_model
+      evaluate_model
+      get_models
+      get_stacking
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AgglomerativeClusteringWrapper
+      DBSCANWrapper
+      HDBSCANWrapper
+      OpticsWrapper
+   
+   
+
+   
+   
+   
+
+
+

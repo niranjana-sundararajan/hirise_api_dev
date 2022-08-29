@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>HIRISE_api.preprocessing.Image_Loader &#8212; HIRISE_api  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="HIRISE_api.preprocessing.utils" href="HIRISE_api.preprocessing.utils.html" />
+    <link rel="prev" title="HIRISE_api.preprocessing.Encoding" href="HIRISE_api.preprocessing.Encoding.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-HIRISE_api.preprocessing.Image_Loader">
+<span id="hirise-api-preprocessing-image-loader"></span><h1>HIRISE_api.preprocessing.Image_Loader<a class="headerlink" href="#module-HIRISE_api.preprocessing.Image_Loader" title="Permalink to this heading">¶</a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_dataloaders</span></code>(folder_path[, transform])</p></td>
+<td><p>Function that generates the dataloaders for a HIRISE dataset, given folder path specified by the user</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_dataset</span></code>(folder_path[, transform])</p></td>
+<td><p>Function that generated the HIRISE Dataset given a folderpath of HIRISE Images</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize_encoder_decoder</span></code>([latent_dimensions])</p></td>
+<td><p>Fuction that initialized the encoder and decoder depeining on the latent</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_classes</span></code>(folder_path[, transform, ...])</p></td>
+<td><p>Function that shows all classes defined by the user though the Image Folders using the Image Folder dataset</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_encoder_decoder_image_sizes</span></code>(folder_path)</p></td>
+<td><p>Function that returns the input and output image sizes of images that have been through the autoencoding process</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">HiriseImageDataset</span></code>(path_to_images[, transform])</p></td>
+<td><p>Hirise Image Dataset Class that initialize the pytorch ImageLoader Dataset with the folder images to return and image and associated folder  name( label)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">HIRISE_api</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="HIRISE_api.html">HIRISE_api</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="HIRISE_api.hirise.html">HIRISE_api.hirise</a></li>
+<li class="toctree-l2"><a class="reference internal" href="HIRISE_api.models.html">HIRISE_api.models</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="HIRISE_api.preprocessing.html">HIRISE_api.preprocessing</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="HIRISE_api.preprocessing.Data_Preparation.html">HIRISE_api.preprocessing.Data_Preparation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="HIRISE_api.preprocessing.Dimension_Reduction.html">HIRISE_api.preprocessing.Dimension_Reduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="HIRISE_api.preprocessing.Encoding.html">HIRISE_api.preprocessing.Encoding</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">HIRISE_api.preprocessing.Image_Loader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="HIRISE_api.preprocessing.utils.html">HIRISE_api.preprocessing.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="HIRISE_api.tests.html">HIRISE_api.tests</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="HIRISE_api.html">HIRISE_api</a><ul>
+  <li><a href="HIRISE_api.preprocessing.html">HIRISE_api.preprocessing</a><ul>
+      <li>Previous: <a href="HIRISE_api.preprocessing.Encoding.html" title="previous chapter">HIRISE_api.preprocessing.Encoding</a></li>
+      <li>Next: <a href="HIRISE_api.preprocessing.utils.html" title="next chapter">HIRISE_api.preprocessing.utils</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.1.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/_autosummary/HIRISE_api.preprocessing.Image_Loader.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

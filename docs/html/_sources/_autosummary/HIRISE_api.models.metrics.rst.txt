@@ -1,0 +1,32 @@
+HIRISE\_api.models.metrics
+==========================
+
+.. automodule:: HIRISE_api.models.metrics
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      calculate_metrics
+      classification_metrics_dataframe
+      generate_precision_dataframe
+      print_confusion_matrix
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

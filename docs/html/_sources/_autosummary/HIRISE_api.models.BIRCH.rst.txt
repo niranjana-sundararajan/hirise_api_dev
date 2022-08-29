@@ -1,0 +1,29 @@
+HIRISE\_api.models.BIRCH
+========================
+
+.. automodule:: HIRISE_api.models.BIRCH
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      BIRCH_analysis
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
