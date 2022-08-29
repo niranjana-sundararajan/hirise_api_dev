@@ -1,5 +1,14 @@
-from sklearn.metrics import adjusted_rand_score, adjusted_mutual_info_score, normalized_mutual_info_score, \
-    mutual_info_score, rand_score, completeness_score, homogeneity_score, v_measure_score, balanced_accuracy_score
+from sklearn.metrics import (
+    adjusted_rand_score,
+    adjusted_mutual_info_score,
+    normalized_mutual_info_score,
+    mutual_info_score,
+    rand_score,
+    completeness_score,
+    homogeneity_score,
+    v_measure_score,
+    balanced_accuracy_score,
+)
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_score
 
@@ -12,7 +21,7 @@ import seaborn as sns
 
 def calculate_metrics(model, labels, verbose=False):
     """
-    Function that calulates metrics icluding, rand score, adjusted rand score, mutual information score, normalized mutual information score, adjusted mutual information score,
+    Function that calulates metrics including, rand score, adjusted rand score, mutual information score, normalized mutual information score, adjusted mutual information score,
     balanced accuracy score, completeness score, homogeniety score and v score for a given model. The label data must be provided by the user to obtain these metrics.
     """
 
@@ -61,16 +70,26 @@ def classification_metrics_dataframe(model_list, label_list):
         metrics_list.append(calculate_metrics(model=mod, labels=label_list))
 
     # Define the metrics dataframe
-    metrics_dataframe = pd.DataFrame(metrics_list,
-                                     columns=["RAND_SCORE", "ADJUSTED RAND SCORE", "MUTUAL INFO SCORE",
-                                              "NORMALIZED MUTUAL INFO SCORE",
-                                              "ADJUSTED MUTUAL INFO SCORE", "BALANCED ACCURACY SCORE",
-                                              "COMPLETENESS SCORE",
-                                              "HOMOGENEITY SCORE", "V SCORE"])
+    metrics_dataframe = pd.DataFrame(
+        metrics_list,
+        columns=[
+            "RAND_SCORE",
+            "ADJUSTED RAND SCORE",
+            "MUTUAL INFO SCORE",
+            "NORMALIZED MUTUAL INFO SCORE",
+            "ADJUSTED MUTUAL INFO SCORE",
+            "BALANCED ACCURACY SCORE",
+            "COMPLETENESS SCORE",
+            "HOMOGENEITY SCORE",
+            "V SCORE",
+        ],
+    )
     return metrics_dataframe
 
 
-def print_confusion_matrix(folder_path, test_labels, translated_values_array, fig_size=(15, 10)):
+def print_confusion_matrix(
+    folder_path, test_labels, translated_values_array, fig_size=(15, 10)
+):
     """
     Function that prints the confusion matrix metric for a given set of image clustering results and the associated images.
     The translated vlaue aray must be entered by the user which represents the results of manual inspection of the clusters
@@ -98,16 +117,18 @@ def print_confusion_matrix(folder_path, test_labels, translated_values_array, fi
 
 def generate_precision_dataframe(folder_path, test_label_list, translated_model):
     """
-    Function that returns a generated a dataframe of all the precision values evaluated for a true and predicted labels 
-    after classifiaction analysis on a dataset. 
+    Function that returns a generated a dataframe of all the precision values evaluated for a true and predicted labels
+    after classifiaction analysis on a dataset.
     """
-     # Generate list of class names and indices
+    # Generate list of class names and indices
     class_names = Image_Loader.show_classes(folder_path=folder_path, dict_values=False)
 
     # Calcualte precision values
-    precision_list = precision_score(test_label_list.label, translated_model, average=None)
+    precision_list = precision_score(
+        test_label_list.label, translated_model, average=None
+    )
 
     # Generate precision dataframe
     precision_df = pd.DataFrame(data=precision_list.reshape(1, 14), columns=class_names)
-    
+
     return precision_df

@@ -6,14 +6,21 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
 
-def BIRCH_analysis(encoded_samples, threshold_value, clusters, plot=False, fig_size=(10, 10), verbose=False):
+def BIRCH_analysis(
+    encoded_samples,
+    threshold_value,
+    clusters,
+    plot=False,
+    fig_size=(10, 10),
+    verbose=False,
+):
     """
-     Function that uses as input the encoded image samples and clusters the data using affinity propogation.
-     The user must specify the damping factor, which is the tuning parameter for affinity propogation clustering.
-     """
+    Function that uses as input the encoded image samples and clusters the data using affinity propogation.
+    The user must specify the damping factor, which is the tuning parameter for affinity propogation clustering.
+    """
     # Standardize the encoded samples
     X = StandardScaler().fit_transform(encoded_samples)
-    
+
     # Instantiate the model
     birch_model = Birch(threshold=threshold_value, n_clusters=clusters)
 
@@ -30,7 +37,7 @@ def BIRCH_analysis(encoded_samples, threshold_value, clusters, plot=False, fig_s
     if verbose:
         print("Number of Clusters : ", len(birch_clusters))
 
-    # Plotting, if specified 
+    # Plotting, if specified
     if plot:
         labels = [f"Cluster {i}" for i in range(len(birch_result))]
         plt.figure(figsize=fig_size)
@@ -42,7 +49,7 @@ def BIRCH_analysis(encoded_samples, threshold_value, clusters, plot=False, fig_s
 
             # make the plot
             plt.scatter(X[index, 0], X[index, 1])
-            plt.legend(labels, loc='upper right')
+            plt.legend(labels, loc="upper right")
 
         # show the BIRCH plot
         plt.show()

@@ -6,11 +6,13 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
 
-def agglomerative_clustering_analysis(encoded_samples, clusters, plot=False, fig_size=(10, 10)):
+def agglomerative_clustering_analysis(
+    encoded_samples, clusters, plot=False, fig_size=(10, 10)
+):
     """
-     Function that uses as input the encoded image samples and clusters the data using agglomerative clustering.
-     The user must specify the number of clusters, which is a parameter for agglomerative clustering.
-     """
+    Function that uses as input the encoded image samples and clusters the data using agglomerative clustering.
+    The user must specify the number of clusters, which is a parameter for agglomerative clustering.
+    """
     # Standardize the encoded samples
     X = StandardScaler().fit_transform(encoded_samples)
 
@@ -33,7 +35,7 @@ def agglomerative_clustering_analysis(encoded_samples, clusters, plot=False, fig
             index = where(agglomerative_result == agglomerative_cluster)
             # make the plot
             plt.scatter(X[index, 0], X[index, 1])
-            plt.legend(labels, loc='upper right')
+            plt.legend(labels, loc="upper right")
 
         # show the Agglomerative Hierarchy plot
         plt.show()

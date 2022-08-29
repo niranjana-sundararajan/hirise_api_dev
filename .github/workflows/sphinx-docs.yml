@@ -34,7 +34,7 @@ jobs:
           sudo apt-get update -y 
           sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
           pip install --upgrade pip # make sure accessing from latest PyPi
-          pip install -r requirements.txt # make sure all packages installed
+          # pip install -r requirements.txt # make sure all packages installed
           pip install -e . # install module
           pip install sphinx
    
@@ -44,8 +44,8 @@ jobs:
           sphinx-build -b html docs docs/html 
           sphinx-build -b latex docs docs/pdf 
           cd docs/pdf
-          pdflatex armageddon.tex
-          pdflatex armageddon.tex
+          pdflatex HIRISE_api.tex
+          pdflatex HIRISE_api.tex
 
       # Commit changes to local git repository
       - name: commit files
@@ -53,7 +53,7 @@ jobs:
           git status
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add ./docs/pdf/hirise-api.pdf
+          git add ./docs/pdf/HIRISE_api.pdf
           git add ./docs/html/
           git commit -m "update hirise documentation"
           git pull --rebase # ensure updates from other workflows incorporated

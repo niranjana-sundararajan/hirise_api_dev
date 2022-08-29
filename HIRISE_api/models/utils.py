@@ -21,20 +21,27 @@ def elbow_curve(encoded_samples, max_values=70, fig_size=(10, 5)):
         inertia_values.append(kmeans_model.inertia_)
 
     plt.figure(figsize=fig_size)
-    plt.plot(inertia_values, 'bx-')
-    plt.title('Finding the number of clusters: Elbow Method')
-    plt.xlabel('Clusters')
-    plt.ylabel('Scores')
+    plt.plot(inertia_values, "bx-")
+    plt.title("Finding the number of clusters: Elbow Method")
+    plt.xlabel("Clusters")
+    plt.ylabel("Scores")
     plt.show()
 
 
 def translate_labels(translation_list, model_results):
     test_label_list = [i for i in range(14)]
-    return np.array([test_label_list[translation_list.index(i)] if i in translation_list else i for i in model_results])
+    return np.array(
+        [
+            test_label_list[translation_list.index(i)] if i in translation_list else i
+            for i in model_results
+        ]
+    )
 
 
 def generate_precision_dataframe(folder_path, test_label_list, translated_model):
     class_names = Image_Loader.show_classes(folder_path=folder_path, dict_values=False)
-    precision_list = precision_score(test_label_list.label, translated_model, average=None)
+    precision_list = precision_score(
+        test_label_list.label, translated_model, average=None
+    )
     precision_df = pd.DataFrame(data=precision_list.reshape(1, 14), columns=class_names)
     return precision_df

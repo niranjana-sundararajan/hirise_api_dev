@@ -366,7 +366,7 @@ class HiriseImage:
             ].values[0],
             "MISSION_PHASE_NAME": observation_values["MISSION_PHASE_NAME"].values[0],
             "ORBIT_NUMBER": observation_values["ORBIT_NUMBER"].values[0],
-            "ORBITAL_RANGE": observation_values["ORBITAL_RANGE"].values[0]
+            "ORBITAL_RANGE": observation_values["ORBITAL_RANGE"].values[0],
         }
 
     def get_viewing_parameters(self, local_database_path=None):
@@ -384,7 +384,7 @@ class HiriseImage:
             "LOCAL_TIME": observation_values["LOCAL_TIME"].values[0],
             "SOLAR_LONGITUDE": observation_values["SOLAR_LONGITUDE"].values[0],
             "SUB_SOLAR_AZIMUTH": observation_values["SUB_SOLAR_AZIMUTH"].values[0],
-            "NORTH_AZIMUTH": observation_values["NORTH_AZIMUTH"].values[0]
+            "NORTH_AZIMUTH": observation_values["NORTH_AZIMUTH"].values[0],
         }
 
     def get_timing_parameters(self, local_database_path=None):
@@ -409,7 +409,7 @@ class HiriseImage:
             ].values[0],
             "PRODUCT_CREATION_TIME": observation_values["PRODUCT_CREATION_TIME"].values[
                 0
-            ]
+            ],
         }
 
     def get_other_parameters(self, local_database_path=None):
@@ -425,7 +425,7 @@ class HiriseImage:
             "OFFSET": observation_values["OFFSET"].values[0],
             "CENTER_FILTER_WAVELENGTH": observation_values[
                 "CENTER_FILTER_WAVELENGTH"
-            ].values[0]
+            ].values[0],
         }
 
     def get_all_parameters(self, local_database_path=None):

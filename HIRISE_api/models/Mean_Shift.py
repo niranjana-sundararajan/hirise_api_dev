@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 
 def mean_shift_analysis(encoded_samples, plot=True, verbose=False, fig_size=(10, 7)):
     """
-     Function that uses as input the encoded image samples and clusters the data using Mean Shift Clustering Method.
-     There are no tuning parameters in the mean-shift method.
-     """
+    Function that uses as input the encoded image samples and clusters the data using Mean Shift Clustering Method.
+    There are no tuning parameters in the mean-shift method.
+    """
     # Standardize the encoded samples
     X = StandardScaler().fit_transform(encoded_samples)
 
@@ -26,7 +26,7 @@ def mean_shift_analysis(encoded_samples, plot=True, verbose=False, fig_size=(10,
     # Display additional model information,if specified
     if verbose:
         print("Number of clusters are :", len(mean_clusters))
-    
+
     # Plotting,if specified
     if plot:
         plt.figure(figsize=fig_size)

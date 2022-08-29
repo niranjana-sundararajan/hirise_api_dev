@@ -5,15 +5,15 @@ from bs4 import BeautifulSoup
 
 def file_parameters_list():
     """
-     Function that returns file parameters list
-     """
+    Function that returns file parameters list
+    """
     return ["FILE_NAME", "REQUIRED_STORAGE_BYTES", "MISSION_PHASE_NAME", "ORBIT_NUMBER"]
 
 
 def image_map_parameters_list():
     """
-     Function that returns image mapping parameters list
-     """
+    Function that returns image mapping parameters list
+    """
     return [
         "CENTER_LATITUDE",
         "CENTER_LONGITUDE",
@@ -26,8 +26,8 @@ def image_map_parameters_list():
 
 def viewing_parameters_list():
     """
-     Function that returns viewing parameters list
-     """
+    Function that returns viewing parameters list
+    """
     return [
         "INCIDENCE_ANGLE",
         "EMISSION_ANGLE",
@@ -41,8 +41,8 @@ def viewing_parameters_list():
 
 def timing_parameters_list():
     """
-     Function that returns timing parameters list
-     """
+    Function that returns timing parameters list
+    """
     return [
         "MRO:OBSERVATION_START_TIME",
         "START_TIME",
@@ -55,23 +55,26 @@ def timing_parameters_list():
 
 def other_parameters_list():
     """
-     Function that returns scaling factor, offset, center filter wavelength parameters list
-     """
+    Function that returns scaling factor, offset, center filter wavelength parameters list
+    """
     return ["SCALING_FACTOR", "OFFSET", "CENTER_FILTER_WAVELENGTH"]
-
-
 
 
 def LBL_parser(label_url):
     """
-     Function that parses the .LBL file in NASA's Planetary Data System
-     """
+    Function that parses the .LBL file in NASA's Planetary Data System
+    """
     # Get the data from the url
     req = requests.get(label_url, stream=True)
 
     lbl_file = req.text
-    lbl_dict = {"file_parameters": {}, "image_map_parameters": {}, "viewing_parameters": {}, "timing_parameters": {},
-                "other_parameters": {}}
+    lbl_dict = {
+        "file_parameters": {},
+        "image_map_parameters": {},
+        "viewing_parameters": {},
+        "timing_parameters": {},
+        "other_parameters": {},
+    }
 
     # Select the parameters to save
     file_parameters = file_parameters_list()
@@ -116,8 +119,8 @@ def LBL_parser(label_url):
 
 def get_website_data(base_url, page_key, sub_key=None):
     """
-     Function that assistes in wescaping the NASA website
-     """
+    Function that assistes in wescaping the NASA website
+    """
     if sub_key:
         page_url = base_url + str(page_key) + "/" + sub_key
     else:
@@ -144,8 +147,8 @@ def get_website_data(base_url, page_key, sub_key=None):
 
 def validate_append_float_data(param, list_of_params):
     """
-     Function that validates floating point data
-     """
+    Function that validates floating point data
+    """
     if param:
         list_of_params.append(float(param.split("<")[0]))
     else:
@@ -154,8 +157,8 @@ def validate_append_float_data(param, list_of_params):
 
 def append_float_data_without_strip(param, list_of_params):
     """
-     Function that validates floating point data without stripping the last characters
-     """
+    Function that validates floating point data without stripping the last characters
+    """
     if param:
         list_of_params.append(float(param))
     else:

@@ -12,7 +12,7 @@ import random
 import numpy as np
 import warnings  # Ignore warnings
 
-os.environ['OPEgrid_columnsV_IO_ENABLE_JASPER'] = 'true'
+os.environ["OPEgrid_columnsV_IO_ENABLE_JASPER"] = "true"
 warnings.filterwarnings("ignore")
 
 Image.MAX_IMAGE_PIXELS = None
@@ -22,7 +22,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 
-if __package__ is None or __package__ == '':
+if __package__ is None or __package__ == "":
     # uses current directory visibility
     import Image_Loader
 else:
@@ -44,7 +44,9 @@ class DataPreparation:
         else:
             cv2.imwrite(file_name, dst)
 
-    def resize_image(self, folder_path, resized_images_folder_path, pixel_length_cm=250):
+    def resize_image(
+        self, folder_path, resized_images_folder_path, pixel_length_cm=250
+    ):
         # Reduction factor based on NASA's decription of the HIRISE image
         reduce_factor = 25 / pixel_length_cm
         imgfiles = glob(f"{folder_path}/*.IMG")
@@ -63,13 +65,22 @@ class DataPreparation:
 
         # For each image in folder, resize image
         for im, name in tqdm(zip(img_list, imgfiles)):
-            resized_im = im.resize((round(im.size[0] * reduce_factor), round(im.size[1] * reduce_factor)))
+            resized_im = im.resize(
+                (round(im.size[0] * reduce_factor), round(im.size[1] * reduce_factor))
+            )
             try:
-                resized_im.save(name.split('/')[-1] + '_resizedimage.jpg')
+                resized_im.save(name.split("/")[-1] + "_resizedimage.jpg")
             except (Exception,):
                 pass
 
-    def tile_images(self, folder_path, image_directory, image_size_pixels, resized=True, remove_background=True):
+    def tile_images(
+        self,
+        folder_path,
+        image_directory,
+        image_size_pixels,
+        resized=True,
+        remove_background=True,
+    ):
         """
         Preprocessing function that tiles large images based on the size specified by the user
         """
@@ -91,22 +102,26 @@ class DataPreparation:
         else:
             os.makedirs(image_directory)
             os.chdir(image_directory)
-        
+
         # For each image, check size and tile acordingly
         for img, name in tqdm(zip(img_list, imgfiles)):
             try:
                 im = np.asarray(img)
                 for r in range(0, math.ceil(im.shape[0]), image_size_pixels):
                     for c in range(0, math.ceil(im.shape[1]), image_size_pixels):
-                        f_name = name.split('/')[-1].split('.')[0] + f"_{r}_{c}.jpg"
-                        cv2.imwrite(str(f_name), im[r:r + image_size_pixels, c:c + image_size_pixels, :])
+                        f_name = name.split("/")[-1].split(".")[0] + f"_{r}_{c}.jpg"
+                        cv2.imwrite(
+                            str(f_name),
+                            im[r : r + image_size_pixels, c : c + image_size_pixels, :],
+                        )
                         if remove_background:
                             DataPreparation.remove_background(self, file_name=f_name)
             except (Exception,):
                 pass
 
-
-    def convert_to_grayscale(self, folder_path, image_directory, remove_background=True):
+    def convert_to_grayscale(
+        self, folder_path, image_directory, remove_background=True
+    ):
         """
         Preprocessing function that converts images into grayscale images
         """
@@ -125,7 +140,7 @@ class DataPreparation:
 
         for img, name in zip(im_list, imgfiles):
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            f_name = "gray_" + name.split('\\')[1]
+            f_name = "gray_" + name.split("\\")[1]
             try:
                 cv2.imwrite(f_name, gray)
             except (Exception,):
@@ -133,7 +148,9 @@ class DataPreparation:
             if remove_background:
                 DataPreparation.remove_background(self, file_name=f_name)
 
-    def remove_image_with_empty_pixels(self, folder_path, max_percentage_empty_space=20):
+    def remove_image_with_empty_pixels(
+        self, folder_path, max_percentage_empty_space=20
+    ):
         """
         Preprocessing function that removes tiled images with a specified percentage of empty pixels, to avoid noise in the dataset
         """
@@ -150,9 +167,9 @@ class DataPreparation:
         for f_name in tqdm(imgfiles):
             empty = 0
             try:
-                img = Image.open(f_name.split('\\')[-1])
+                img = Image.open(f_name.split("\\")[-1])
             except:
-                img = Image.open(f_name.split('/')[-1])
+                img = Image.open(f_name.split("/")[-1])
 
             width, height = img.width, img.height
             total = width * height
@@ -164,7 +181,7 @@ class DataPreparation:
             # Remove images that have empty sapce above specified amount
             if percent >= max_percentage_empty_space:
                 try:
-                    os.remove(f_name.split('\\')[1])
+                    os.remove(f_name.split("\\")[1])
                 except:
                     os.remove(f_name)
 
@@ -174,7 +191,9 @@ class DataPreparation:
         """
         if not transform_data:
             transform_data = transforms.Compose([transforms.ToTensor()])
-        dataset = Image_Loader.HiriseImageDataset(path_to_images=f_path, transform=transform_data)
+        dataset = Image_Loader.HiriseImageDataset(
+            path_to_images=f_path, transform=transform_data
+        )
 
         return dataset
 
@@ -183,10 +202,11 @@ class DataPreparation:
         Function that returns the pytorch tensors for train, test and validation data with dataset a Imageloader dataset as the input
         """
 
-        # Split the dataset into training and validation 
+        # Split the dataset into training and validation
         m = len(dataset.train_dataset)
-        train_ds, val_ds = random_split(dataset.train_dataset, [math.floor(m - m * 0.2), math.ceil(m * 0.2)])
-
+        train_ds, val_ds = random_split(
+            dataset.train_dataset, [math.floor(m - m * 0.2), math.ceil(m * 0.2)]
+        )
 
         # Training Data -------------------------------------------------------------------------------------
         # Empty lists to store the training data
@@ -241,7 +261,9 @@ class DataPreparation:
 
         return dataset_tensor
 
-    def get_train_test_val_dataloader(self, train_data, test_data, val_data, b_size=128):
+    def get_train_test_val_dataloader(
+        self, train_data, test_data, val_data, b_size=128
+    ):
         """
         Function that returns the pytorch dataloader for train, test and validation data with batch size as the input parameter
         """
@@ -257,7 +279,7 @@ class DataPreparation:
         return train_loader, test_loader, valid_loader
 
     def show_training_data(self, dataset, grid_rows=5, grid_columns=5):
-        """ 
+        """
         Prints the training images in a defined grid
         """
         # Set up axes and subplots

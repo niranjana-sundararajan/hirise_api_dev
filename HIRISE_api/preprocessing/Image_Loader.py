@@ -6,7 +6,7 @@ import numpy as np
 import torch
 import warnings
 
-if __package__ is None or __package__ == '':
+if __package__ is None or __package__ == "":
     import Data_Preparation
     import Encoding
 else:
@@ -19,13 +19,11 @@ parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 
 
 class HiriseImageDataset(Dataset):
-    """Hirise Image Dataset Class that initialize the pytorch ImageLoader Dataset 
+    """Hirise Image Dataset Class that initialize the pytorch ImageLoader Dataset
     with the folder images to return and image and associated folder name(label)
     """
 
-    def __init__(self,
-                 path_to_images,
-                 transform=None):
+    def __init__(self, path_to_images, transform=None):
         # ------------------------------------------------------------------------------
         # path_to_images: where you put the image dataset
         # transform:  data transform
@@ -41,7 +39,10 @@ class HiriseImageDataset(Dataset):
         # Split the data into train and test data 80 : 20
         # ------------------------------------------------------------------------------
         # Calculate the lengths of the vectors
-        lengths = [int(np.ceil(len(self.dataset) * 0.8)), int(np.floor(len(self.dataset) * 0.2))]
+        lengths = [
+            int(np.ceil(len(self.dataset) * 0.8)),
+            int(np.floor(len(self.dataset) * 0.2)),
+        ]
 
         # Extract the images and labels
         self.train_dataset, self.test_dataset = random_split(self.dataset, lengths)
@@ -53,7 +54,7 @@ class HiriseImageDataset(Dataset):
     def __getitem__(self, idx):
         # Get each item and target of the image loader dataset
         sample, target = self.data[idx], self.data[idx]
-        sample = sample.view(1, 256, 256).float() / 255.
+        sample = sample.view(1, 256, 256).float() / 255.0
         if self.transform:
             sample = self.transform(sample)
             target = self.transform(target)
@@ -66,10 +67,14 @@ def generate_dataset(folder_path, transform=None):
     """
     # Define the transformation function for the dataset
     if not transform:
-        transform = transforms.Compose([transforms.ToTensor(),
-                                        transforms.Resize((256, 256)),
-                                        transforms.Normalize(0.40655, 0.1159),
-                                        transforms.Grayscale(num_output_channels=1)])
+        transform = transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.Resize((256, 256)),
+                transforms.Normalize(0.40655, 0.1159),
+                transforms.Grayscale(num_output_channels=1),
+            ]
+        )
     # Initialize the data prep class
     dp = Data_Preparation.DataPreparation()
 
@@ -80,12 +85,16 @@ def generate_dataset(folder_path, transform=None):
 
 def initialize_encoder_decoder(latent_dimensions=2000):
     """
-    Fuction that initialized the encoder and decoder depeining on the latent dimensions specified by the user. 
+    Fuction that initialized the encoder and decoder depeining on the latent dimensions specified by the user.
     Default is 2000 dimenions.
     """
     # Initialzie the encoder and decoder from the Encoding Module
-    encoder = Encoding.CAEEncoder(encoded_space_dim=latent_dimensions, fc2_input_dim=256)
-    decoder = Encoding.CAEDecoder(encoded_space_dim=latent_dimensions, fc2_input_dim=256)
+    encoder = Encoding.CAEEncoder(
+        encoded_space_dim=latent_dimensions, fc2_input_dim=256
+    )
+    decoder = Encoding.CAEDecoder(
+        encoded_space_dim=latent_dimensions, fc2_input_dim=256
+    )
 
     # Check if the GPU is available
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -105,8 +114,13 @@ def generate_dataloaders(folder_path, transform=None):
     # Define the transforms if not present
     if not transform:
         transform = transforms.Compose(
-            [transforms.ToTensor(), transforms.Resize((256, 256)), transforms.Normalize(0.40655, 0.1159),
-             transforms.Grayscale(num_output_channels=1)])
+            [
+                transforms.ToTensor(),
+                transforms.Resize((256, 256)),
+                transforms.Normalize(0.40655, 0.1159),
+                transforms.Grayscale(num_output_channels=1),
+            ]
+        )
 
     # Generate the dataset
     datasets = generate_dataset(folder_path=folder_path, transform=transform)
@@ -115,11 +129,13 @@ def generate_dataloaders(folder_path, transform=None):
     tr, tst, val = dp.get_train_test_val_tensors(dataset=datasets)
 
     # Get the required dataloaders
-    train_loader, test_loader, val_loader = dp.get_train_test_val_dataloader(tr, tst, val)
+    train_loader, test_loader, val_loader = dp.get_train_test_val_dataloader(
+        tr, tst, val
+    )
     return train_loader, test_loader, val_loader
 
 
-def show_encoder_decoder_image_sizes(folder_path, device = 'cpu', transform=None):
+def show_encoder_decoder_image_sizes(folder_path, device="cpu", transform=None):
     """
     Function that returns the input and output image sizes of images that have been through the autoencoding process
     """
@@ -128,19 +144,19 @@ def show_encoder_decoder_image_sizes(folder_path, device = 'cpu', transform=None
 
     # Select first image from the dataset
     img, _ = datasets.train_dataset[0]
-    
+
     # unsqueeze from the dataloader "batch" format(Add the batch dimension in the first axis)
-    img = img.unsqueeze(0).to(device)  
+    img = img.unsqueeze(0).to(device)
 
     # Print the original shape
-    print('Original image shape:', img.shape)
+    print("Original image shape:", img.shape)
     encoder, decoder = initialize_encoder_decoder(latent_dimensions=2000)
 
     # Encode the image
     img_enc = encoder(img)
 
-    # Print the shape after encoding 
-    print('Encoded image shape:', img_enc.shape)
+    # Print the shape after encoding
+    print("Encoded image shape:", img_enc.shape)
 
 
 def show_classes(folder_path, transform=None, dict_values=True):
