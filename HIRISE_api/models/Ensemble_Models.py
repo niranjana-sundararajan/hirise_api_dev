@@ -1,3 +1,7 @@
+import six
+import sys
+sys.modules['sklearn.externals.six'] = six  # noqa: E402
+import os
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from hdbscan import HDBSCAN
@@ -12,10 +16,7 @@ from sklearn.model_selection import cross_val_score
 from numpy import std
 from numpy import mean
 from mlxtend.classifier import StackingClassifier
-import six
-import sys
-sys.modules['sklearn.externals.six'] = six  # noqa: E402
-import os
+
 
 
 # Define the current and parent directories and paths
