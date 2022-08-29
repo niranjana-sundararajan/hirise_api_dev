@@ -1,0 +1,32 @@
+HIRISE\_api.tests.test\_preprocessing
+=====================================
+
+.. automodule:: HIRISE_api.tests.test_preprocessing
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      test_autoencoder
+      test_pca_dimension_reduction
+      test_tsne_dimension_reduction
+      test_umap_dimension_reduction
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

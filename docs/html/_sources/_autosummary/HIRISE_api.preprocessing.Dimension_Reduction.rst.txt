@@ -1,0 +1,31 @@
+HIRISE\_api.preprocessing.Dimension\_Reduction
+==============================================
+
+.. automodule:: HIRISE_api.preprocessing.Dimension_Reduction
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      PCA_analysis
+      TSNE_analysis
+      UMAP_analysis
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
