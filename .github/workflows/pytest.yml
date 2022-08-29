@@ -39,4 +39,7 @@ jobs:
       # Run pytest
       - name: Test with pytest
         run: |
-          pytest HIRISE_api/tests
+          echo "Current directory: $(pwd)"
+          ls
+          cd HIRISE_api
+          pytest tests/

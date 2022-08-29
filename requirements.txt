@@ -18,4 +18,5 @@ tqdm
 twill
 setuptools
 sklearn
+tensorflow
 mlxtend
