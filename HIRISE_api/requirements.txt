@@ -6,7 +6,6 @@ numpy
 torch
 torchvision
 opencv-python
-math
 PIL
 rasterfairy
 seaborn
