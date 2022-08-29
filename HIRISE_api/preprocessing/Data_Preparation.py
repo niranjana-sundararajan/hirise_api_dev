@@ -66,7 +66,10 @@ class DataPreparation:
         # For each image in folder, resize image
         for im, name in tqdm(zip(img_list, imgfiles)):
             resized_im = im.resize(
-                (round(im.size[0] * reduce_factor), round(im.size[1] * reduce_factor))
+                (
+                    round(im.size[0] * reduce_factor),
+                    round(im.size[1] * reduce_factor),
+                )
             )
             try:
                 resized_im.save(name.split("/")[-1] + "_resizedimage.jpg")
@@ -108,14 +111,24 @@ class DataPreparation:
             try:
                 im = np.asarray(img)
                 for r in range(0, math.ceil(im.shape[0]), image_size_pixels):
-                    for c in range(0, math.ceil(im.shape[1]), image_size_pixels):
-                        f_name = name.split("/")[-1].split(".")[0] + f"_{r}_{c}.jpg"
+                    for c in range(
+                        0, math.ceil(im.shape[1]), image_size_pixels
+                    ):
+                        f_name = (
+                            name.split("/")[-1].split(".")[0] + f"_{r}_{c}.jpg"
+                        )
                         cv2.imwrite(
                             str(f_name),
-                            im[r : r + image_size_pixels, c : c + image_size_pixels, :],
+                            im[
+                                r : r + image_size_pixels,
+                                c : c + image_size_pixels,
+                                :,
+                            ],
                         )
                         if remove_background:
-                            DataPreparation.remove_background(self, file_name=f_name)
+                            DataPreparation.remove_background(
+                                self, file_name=f_name
+                            )
             except (Exception,):
                 pass
 
@@ -205,7 +218,8 @@ class DataPreparation:
         # Split the dataset into training and validation
         m = len(dataset.train_dataset)
         train_ds, val_ds = random_split(
-            dataset.train_dataset, [math.floor(m - m * 0.2), math.ceil(m * 0.2)]
+            dataset.train_dataset,
+            [math.floor(m - m * 0.2), math.ceil(m * 0.2)],
         )
 
         # Training Data -------------------------------------------------------------------------------------
@@ -274,7 +288,9 @@ class DataPreparation:
         # Create dataloaders
         train_loader = DataLoader(dataset=training_data, batch_size=b_size)
         valid_loader = DataLoader(dataset=validation_data, batch_size=b_size)
-        test_loader = DataLoader(dataset=testing_data, batch_size=b_size, shuffle=True)
+        test_loader = DataLoader(
+            dataset=testing_data, batch_size=b_size, shuffle=True
+        )
 
         return train_loader, test_loader, valid_loader
 

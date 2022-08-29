@@ -7,8 +7,12 @@ if __package__ is None or __package__ == "":
     CSV_FILE_PATH = "../hirise/hirise_data.csv"
     THEME_FILE_PATH = "../hirise/theme_data.csv"
 else:
-    CSV_FILE_PATH = pkg_resources.resource_filename("hirise", "hirise_data.csv")
-    THEME_FILE_PATH = pkg_resources.resource_filename("hirise", "theme_data.csv")
+    CSV_FILE_PATH = pkg_resources.resource_filename(
+        "hirise", "hirise_data.csv"
+    )
+    THEME_FILE_PATH = pkg_resources.resource_filename(
+        "hirise", "theme_data.csv"
+    )
 
 
 def test_get_all_parameters():
@@ -42,5 +46,7 @@ def test_get_images():
 
 def test_filter_center_latlon():
     hirise_image_client = Image_Client.ImageClient()
-    images_result = hirise_image_client.filter_center_latlon(center_latlon=[90, 0])
+    images_result = hirise_image_client.filter_center_latlon(
+        center_latlon=[90, 0]
+    )
     assert images_result

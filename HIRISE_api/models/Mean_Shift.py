@@ -6,7 +6,9 @@ from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
 
-def mean_shift_analysis(encoded_samples, plot=True, verbose=False, fig_size=(10, 7)):
+def mean_shift_analysis(
+    encoded_samples, plot=True, verbose=False, fig_size=(10, 7)
+):
     """
     Function that uses as input the encoded image samples and clusters the data using Mean Shift Clustering Method.
     There are no tuning parameters in the mean-shift method.

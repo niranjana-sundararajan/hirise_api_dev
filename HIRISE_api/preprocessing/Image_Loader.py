@@ -31,7 +31,9 @@ class HiriseImageDataset(Dataset):
         # ------------------------------------------------------------------------------
 
         # Load all the images and their labels
-        self.dataset = datasets.ImageFolder(path_to_images, transform=transform)
+        self.dataset = datasets.ImageFolder(
+            path_to_images, transform=transform
+        )
         self.len = len(self.dataset.imgs)
         self.path_to_images = path_to_images
 
@@ -45,7 +47,9 @@ class HiriseImageDataset(Dataset):
         ]
 
         # Extract the images and labels
-        self.train_dataset, self.test_dataset = random_split(self.dataset, lengths)
+        self.train_dataset, self.test_dataset = random_split(
+            self.dataset, lengths
+        )
 
     def __len__(self):
         # Return the number of samples
@@ -79,7 +83,9 @@ def generate_dataset(folder_path, transform=None):
     dp = Data_Preparation.DataPreparation()
 
     # Get image dataset
-    dataset = dp.get_image_dataset(f_path=folder_path, transform_data=transform)
+    dataset = dp.get_image_dataset(
+        f_path=folder_path, transform_data=transform
+    )
     return dataset
 
 
@@ -97,7 +103,11 @@ def initialize_encoder_decoder(latent_dimensions=2000):
     )
 
     # Check if the GPU is available
-    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    device = (
+        torch.device("cuda")
+        if torch.cuda.is_available()
+        else torch.device("cpu")
+    )
 
     # Move both the encoder and the decoder to the selected device
     return encoder.to(device), decoder.to(device)
@@ -135,7 +145,9 @@ def generate_dataloaders(folder_path, transform=None):
     return train_loader, test_loader, val_loader
 
 
-def show_encoder_decoder_image_sizes(folder_path, device="cpu", transform=None):
+def show_encoder_decoder_image_sizes(
+    folder_path, device="cpu", transform=None
+):
     """
     Function that returns the input and output image sizes of images that have been through the autoencoding process
     """

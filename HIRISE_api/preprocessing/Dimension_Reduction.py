@@ -97,7 +97,9 @@ def PCA_analysis(
     return pca_df
 
 
-def TSNE_analysis(encoded_samples, labels, plot=True, plot_3d=False, fig_size=(12, 10)):
+def TSNE_analysis(
+    encoded_samples, labels, plot=True, plot_3d=False, fig_size=(12, 10)
+):
     """
     The T-SNE analysis allows the user to understand diffrent aspects of the TSNE method.
      The user can choose to plot the 2D and 3D visualisations.
@@ -183,7 +185,10 @@ def UMAP_analysis(
         plt.xlabel("Component 1")
         plt.ylabel("Component 2")
         plt.scatter(
-            UMAP_df["UMAP1"], UMAP_df["UMAP2"], c=UMAP_df["UMAP2"], cmap="Accent_r"
+            UMAP_df["UMAP1"],
+            UMAP_df["UMAP2"],
+            c=UMAP_df["UMAP2"],
+            cmap="Accent_r",
         )
     if plot_3d:
         plt.figure(figsize=fig_size)

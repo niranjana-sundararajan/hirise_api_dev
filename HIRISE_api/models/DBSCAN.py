@@ -47,7 +47,9 @@ def DBSCAN_analysis(
     if verbose:
         print(
             "Number of clusters: {}".format(
-                len(set(DBSCAN_predictions[np.where(DBSCAN_predictions != -1)]))
+                len(
+                    set(DBSCAN_predictions[np.where(DBSCAN_predictions != -1)])
+                )
             )
         )
         print(
@@ -70,6 +72,8 @@ def DBSCAN_analysis(
         )
         print(
             "Adjusted Mutual Information: %0.3f"
-            % metrics.adjusted_mutual_info_score(true_labels, DBSCAN_predictions)
+            % metrics.adjusted_mutual_info_score(
+                true_labels, DBSCAN_predictions
+            )
         )
     return DBSCAN_predictions

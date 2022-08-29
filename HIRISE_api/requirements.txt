@@ -5,7 +5,7 @@ pandas
 numpy
 torch
 torchvision
-cv2
+opencv-python
 math
 PIL
 rasterfairy

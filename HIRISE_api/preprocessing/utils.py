@@ -92,11 +92,18 @@ def display_all_images(
         img_ar = float(img.width) / img.height
         if img_ar > aspect_ratio:
             margin = 0.5 * (img.width - aspect_ratio * img.height)
-            img = img.crop((margin, 0, margin + aspect_ratio * img.height, img.height))
+            img = img.crop(
+                (margin, 0, margin + aspect_ratio * img.height, img.height)
+            )
         else:
             margin = 0.5 * (img.height - float(img.width) / aspect_ratio)
             img = img.crop(
-                (0, margin, img.width, margin + float(img.width) / aspect_ratio)
+                (
+                    0,
+                    margin,
+                    img.width,
+                    margin + float(img.width) / aspect_ratio,
+                )
             )
         img = img.resize((tile_width, tile_height), Image.ANTIALIAS)
         grid_image.paste(img, (int(x), int(y)))
@@ -186,7 +193,8 @@ def show_cluster_images(
 
     # Define the cluster dataframe
     dataframe = pd.concat(
-        [pd.Series(image_list), pd.DataFrame({"cluster": cluster_results})], axis=1
+        [pd.Series(image_list), pd.DataFrame({"cluster": cluster_results})],
+        axis=1,
     )
 
     # Filter and create the datafrmae for the specified cluster

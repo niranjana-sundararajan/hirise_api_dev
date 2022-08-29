@@ -22,7 +22,9 @@ def HDBSCAN_analysis(
     X = StandardScaler().fit_transform(encoded_samples)
 
     # Instantiate the model
-    HDBSCAN_model = HDBSCAN(min_samples=minimum_samples, gen_min_span_tree=True)
+    HDBSCAN_model = HDBSCAN(
+        min_samples=minimum_samples, gen_min_span_tree=True
+    )
 
     # Train the model
     HDBSCAN_predictions = HDBSCAN_model.fit_predict(encoded_samples)

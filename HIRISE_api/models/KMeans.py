@@ -6,7 +6,11 @@ import matplotlib.pyplot as plt
 
 
 def kmeans_analysis(
-    encoded_samples, clusters=13, plot_centers=False, fig_size=(5, 5), plot=True
+    encoded_samples,
+    clusters=13,
+    plot_centers=False,
+    fig_size=(5, 5),
+    plot=True,
 ):
     """
     Function that uses as input the encoded image samples and clusters the data using K Means clustering of applications with noise.

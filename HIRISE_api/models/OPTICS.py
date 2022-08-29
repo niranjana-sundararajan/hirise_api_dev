@@ -7,7 +7,12 @@ import matplotlib.pyplot as plt
 
 
 def OPTICS_analysis(
-    dataframe, eps=0.5, min_samples=15, plot=False, verbose=False, fig_size=(10, 7)
+    dataframe,
+    eps=0.5,
+    min_samples=15,
+    plot=False,
+    verbose=False,
+    fig_size=(10, 7),
 ):
     """
     Function that uses as input the encoded image samples and clusters the data using  Ordering Points To Identify Cluster Structure Method.
@@ -41,7 +46,9 @@ def OPTICS_analysis(
             plt.xlabel("Component 1")
             plt.ylabel("Component 2")
             plt.legend(
-                labels=cols, loc="upper right", bbox_to_anchor=(0.5, 0.0, 0.65, 0.5)
+                labels=cols,
+                loc="upper right",
+                bbox_to_anchor=(0.5, 0.0, 0.65, 0.5),
             )
 
         # Show OPTICS plot

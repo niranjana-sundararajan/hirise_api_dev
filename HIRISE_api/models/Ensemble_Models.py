@@ -1,25 +1,25 @@
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from hdbscan import HDBSCAN
+from sklearn.cluster import KMeans
+from sklearn.cluster import AffinityPropagation
+from sklearn.cluster import DBSCAN
+from sklearn.cluster import Birch
+from sklearn.cluster import OPTICS
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.model_selection import cross_val_score
+from numpy import std
+from numpy import mean
+from mlxtend.classifier import StackingClassifier
+import os
 import six
 import sys
 
 sys.modules["sklearn.externals.six"] = six
-import os
 
 # -----------------------------------------------------------------------------------------------------------------------------
 
-from mlxtend.classifier import StackingClassifier
-from numpy import mean
-from numpy import std
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import RepeatedStratifiedKFold
-from sklearn.cluster import AgglomerativeClustering
-from sklearn.cluster import OPTICS
-from sklearn.cluster import Birch
-from sklearn.cluster import DBSCAN
-from sklearn.cluster import AffinityPropagation
-from sklearn.cluster import KMeans
-from hdbscan import HDBSCAN
-from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
 
 # -----------------------------------------------------------------------------------------------------------------------------
 
@@ -36,6 +36,8 @@ else:
     from . import utils
 
 # -----------------------------------------------------------------------------------------------------------------------------
+
+
 def get_models(models_name_list_string, translated_models_list):
     models = dict()
     for name, mod in zip(models_name_list_string, translated_models_list):
@@ -93,7 +95,9 @@ def get_stacking(discovery=False, all_models=True):
     # define meta learner model
     meta_learner = KMeans(14, random_state=0)
     meta_learner._estimator_type = "classifier"
-    model = StackingClassifier(classifiers=estimators, meta_classifier=meta_learner)
+    model = StackingClassifier(
+        classifiers=estimators, meta_classifier=meta_learner
+    )
     return model
 
 
@@ -105,7 +109,9 @@ def get_models(discovery=False):
     models = dict()
     if discovery:
         models["dbscan"] = DBSCANWrapper(eps=0.5, min_samples=5)
-        models["hdbscan"] = HDBSCANWrapper(min_samples=5, gen_min_span_tree=True)
+        models["hdbscan"] = HDBSCANWrapper(
+            min_samples=5, gen_min_span_tree=True
+        )
         models["affinity"] = AffinityPropagation(damping=0.7)
         models["optics"] = OpticsWrapper(eps=0.7, min_samples=9)
         models["stacking"] = get_stacking()
@@ -141,7 +147,8 @@ def evaluate_model(
         translation_values = translation_dataframe.TRANSLATION_LIST[
             translation_dataframe["CLUSTERING_MODEL"]
             == clustering_model & translation_dataframe["DIM_RED"]
-            == dim_reduction_technique & translation_dataframe["TRANSFER_MODEL"]
+            == dim_reduction_technique
+            & translation_dataframe["TRANSFER_MODEL"]
             == transfer_learning_model
         ]
 
@@ -150,7 +157,13 @@ def evaluate_model(
         )
 
     scores = cross_val_score(
-        model, X, y, scoring=scoring_measure, cv=cv, n_jobs=1, error_score="raise"
+        model,
+        X,
+        y,
+        scoring=scoring_measure,
+        cv=cv,
+        n_jobs=1,
+        error_score="raise",
     )
     return scores
 
@@ -192,7 +205,10 @@ def ensemble_model(
             results.append(scores)
             names.append(name)
             if verbose:
-                print("%s %.3f (%.3f) mean (std): " % (name, mean(scores), std(scores)))
+                print(
+                    "%s %.3f (%.3f) mean (std): "
+                    % (name, mean(scores), std(scores))
+                )
 
     if plot:
         plt.figure(figsize=(30, 10))

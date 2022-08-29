@@ -7,7 +7,12 @@ def file_parameters_list():
     """
     Function that returns file parameters list
     """
-    return ["FILE_NAME", "REQUIRED_STORAGE_BYTES", "MISSION_PHASE_NAME", "ORBIT_NUMBER"]
+    return [
+        "FILE_NAME",
+        "REQUIRED_STORAGE_BYTES",
+        "MISSION_PHASE_NAME",
+        "ORBIT_NUMBER",
+    ]
 
 
 def image_map_parameters_list():

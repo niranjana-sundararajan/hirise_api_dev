@@ -31,8 +31,10 @@ def test_clustering_results():
     birch_clustering = BIRCH.BIRCH_analysis(
         encoded_samples, threshold_value=0.2, clusters=14, plot=False
     )
-    agg_clustering = Agglomerative_Clustering.agglomerative_clustering_analysis(
-        encoded_samples, clusters=14, plot=False, fig_size=(10, 10)
+    agg_clustering = (
+        Agglomerative_Clustering.agglomerative_clustering_analysis(
+            encoded_samples, clusters=14, plot=False, fig_size=(10, 10)
+        )
     )
     affinity_clustering = Affinity_Propagation.affinity_propagation_analysis(
         encoded_samples, damping=0.7, plot=False, fig_size=(15, 10)
@@ -48,9 +50,15 @@ def test_clustering_results():
     hdbscan_clustering = HDBSCAN.HDBSCAN_analysis(
         encoded_samples, minimum_samples=5, verbose=False, plot=False
     )
-    mean_shift_clustering = Mean_Shift.mean_shift_analysis(encoded_samples, plot=True)
+    mean_shift_clustering = Mean_Shift.mean_shift_analysis(
+        encoded_samples, plot=True
+    )
     optics_clustering = OPTICS.OPTICS_analysis(
-        dataframe=encoded_samples, eps=0.5, min_samples=5, plot=False, verbose=False
+        dataframe=encoded_samples,
+        eps=0.5,
+        min_samples=5,
+        plot=False,
+        verbose=False,
     )
 
     # Assert if valid outputs are produced of finite length
@@ -73,9 +81,13 @@ def test_translate_labels():
     translation_list = [8, 7, 5, 11, 9, 2, 10, 3, 4, 1, 6, 13, 12]
 
     # Calculated translated dataframe
-    translated_outputs = models.utils.translate_labels(translation_list, model_results)
+    translated_outputs = models.utils.translate_labels(
+        translation_list, model_results
+    )
 
-    assert (translated_outputs == [9, 5, 7, 8, 2, 10, 1, 0, 4, 6, 3, 12, 11]).all()
+    assert (
+        translated_outputs == [9, 5, 7, 8, 2, 10, 1, 0, 4, 6, 3, 12, 11]
+    ).all()
 
 
 def test_metrics_function():
@@ -93,7 +105,9 @@ def test_metrics_function():
 
     assert (
         len(
-            metrics.calculate_metrics(model=model_results, labels=labels, verbose=False)
+            metrics.calculate_metrics(
+                model=model_results, labels=labels, verbose=False
+            )
         )
         == 9
     )

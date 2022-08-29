@@ -109,19 +109,25 @@ def print_confusion_matrix(
 
     # Plot figures using matplot
     plt.figure(figsize=fig_size)
-    sns.heatmap(df_cm, annot=True, xticklabels=class_names, yticklabels=class_names)
+    sns.heatmap(
+        df_cm, annot=True, xticklabels=class_names, yticklabels=class_names
+    )
     plt.ylabel("Original Labels")
     plt.xlabel("Labels after Classification")
     plt.title("Confusion Matrix")
 
 
-def generate_precision_dataframe(folder_path, test_label_list, translated_model):
+def generate_precision_dataframe(
+    folder_path, test_label_list, translated_model
+):
     """
     Function that returns a generated a dataframe of all the precision values evaluated for a true and predicted labels
     after classifiaction analysis on a dataset.
     """
     # Generate list of class names and indices
-    class_names = Image_Loader.show_classes(folder_path=folder_path, dict_values=False)
+    class_names = Image_Loader.show_classes(
+        folder_path=folder_path, dict_values=False
+    )
 
     # Calcualte precision values
     precision_list = precision_score(
@@ -129,6 +135,8 @@ def generate_precision_dataframe(folder_path, test_label_list, translated_model)
     )
 
     # Generate precision dataframe
-    precision_df = pd.DataFrame(data=precision_list.reshape(1, 14), columns=class_names)
+    precision_df = pd.DataFrame(
+        data=precision_list.reshape(1, 14), columns=class_names
+    )
 
     return precision_df

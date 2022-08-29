@@ -12,11 +12,27 @@ setup(
     description=DESCRIPTION,
     long_description=DESCRIPTION,
     license='MIT',
-    package_dir= {'' : "HIRISE_api"},
-    packages=find_packages(where="HIRISE_api"),
-    include_package_data=True ,
-    install_requires=['wheel','humanize', 'requests', 'beautifulsoup4','umap-learn', 'hdbscan','rasterfairy','pytest'],
-    keywords=['python', 'HIRISE', 'NASA', 'PDS', 'API', 'image data'],
+    package_dir={
+        '': "HIRISE_api"},
+    packages=find_packages(
+        where="HIRISE_api"),
+    include_package_data=True,
+    install_requires=[
+        'wheel',
+        'humanize',
+        'requests',
+        'beautifulsoup4',
+        'umap-learn',
+        'hdbscan',
+        'rasterfairy',
+        'pytest'],
+    keywords=[
+        'python',
+        'HIRISE',
+        'NASA',
+        'PDS',
+        'API',
+        'image data'],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
@@ -24,5 +40,4 @@ setup(
         "Operating System :: Unix",
         "Operating System :: MacOS :: MacOS X",
         "Operating System :: Microsoft :: Windows",
-    ]
-)
+    ])
