@@ -1,9 +1,9 @@
 import numpy as np
 import pkg_resources
 from models import (
-    KMeans, 
+    KMeans,
     BIRCH,
-    Agglomerative_Clustering, 
+    Agglomerative_Clustering,
     metrics,
     utils as mUtils
 )
