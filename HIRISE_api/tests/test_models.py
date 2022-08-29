@@ -70,14 +70,14 @@ def test_clustering_results():
     )
 
     # Assert if valid outputs are produced of finite length
-    assert KMeans_clustering.all() != None
-    assert birch_clustering.all() != None
-    assert agg_clustering.all() != None
-    assert affinity_clustering.all() != None
-    assert dbscan_clustering.all() != None
-    assert hdbscan_clustering.all() != None
-    assert mean_shift_clustering.all() != None
-    assert optics_clustering.all() != None
+    assert KMeans_clustering.all() is not None
+    assert birch_clustering.all() is not None
+    assert agg_clustering.all() is not None
+    assert affinity_clustering.all() is not None
+    assert dbscan_clustering.all() is not None
+    assert hdbscan_clustering.all() is not None
+    assert mean_shift_clustering.all() is not None
+    assert optics_clustering.all() is not None
 
 
 def test_translate_labels():
