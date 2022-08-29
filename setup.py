@@ -13,7 +13,7 @@ setup(
     long_description=DESCRIPTION,
     license='MIT',
     packages=find_packages(),
-    package_dir= {'' : "HIRISE_api"},
+    package_dir= {'hirise' : "HIRISE_api"},
     include_package_data=True ,
     install_requires=['wheel','humanize', 'requests', 'beautifulsoup4','umap-learn', 'hdbscan','rasterfairy'],
     keywords=['python', 'HIRISE', 'NASA', 'PDS', 'API', 'image data'],
