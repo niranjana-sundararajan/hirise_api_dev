@@ -31,11 +31,15 @@ jobs:
       # Install dependencies, specifically LaTeX, Sphinx and the module being documented
       - name: Install dependencies
         run: |
+          echo "$(pwd)"
           sudo apt-get update -y 
           sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
           pip install --upgrade pip # make sure accessing from latest PyPi
           pip install -r requirements.txt # make sure all packages installed
-          cd .. && pip install -e . # install module
+          echo "$(pwd)"
+          cd ..
+          echo "$(pwd)"
+          pip install -e . # install module
           pip install sphinx
    
       # Build PDF with Sphinx
