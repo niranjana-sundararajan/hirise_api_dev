@@ -39,4 +39,4 @@ jobs:
       # Run pytest
       - name: Test with pytest
         run: |
-          pytest tests
+          pytest HIRISE_api/tests
