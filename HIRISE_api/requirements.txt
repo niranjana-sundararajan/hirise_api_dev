@@ -7,6 +7,7 @@ torch
 torchvision
 opencv-python
 math
+keras
 PIL
 rasterfairy
 seaborn

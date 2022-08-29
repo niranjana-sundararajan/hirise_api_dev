@@ -9,6 +9,7 @@ opencv-python
 Pillow
 rasterfairy
 seaborn
+keras
 hdbscan
 umap-learn
 pytest
