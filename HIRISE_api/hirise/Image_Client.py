@@ -10,12 +10,12 @@ import pkg_resources
 import shutil
 import random
 
-# ---------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Define the current and parent directories and paths
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 
-# ---------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 if __package__ is None or __package__ == "":
     # uses current directory visibility
     import Hirise_Image
@@ -37,7 +37,7 @@ else:
         "hirise", "theme_data.csv"
     )
 
-# --------------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 class ImageClient:
@@ -58,7 +58,7 @@ class ImageClient:
         easternmost_longitude=None,
         westernmost_longitude=None,
     ):
-        """Function that queries the database and gets the 
+        """Function that queries the database and gets the
         image according to the given query"""
         # Read from the database
         if local_database_path:
@@ -101,9 +101,9 @@ class ImageClient:
 
         return Hirise_img_objects
 
-    # ----------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
     # Filter Images Based on Image Parameters
-    # ----------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
     def filter_center_latlon(
         self,
         local_database_path=False,
@@ -146,8 +146,8 @@ class ImageClient:
         eastwest_lon,
         local_database_path=False,
     ):
-        """Function that returns HIRISE image object filtered 
-        based on maximum ranges of latitudes and/or east-west 
+        """Function that returns HIRISE image object filtered
+        based on maximum ranges of latitudes and/or east-west
         longitudes given by user"""
         if local_database_path:
             hirise_df = pd.read_csv(local_database_path)
@@ -174,9 +174,10 @@ class ImageClient:
         return Hirise_img_objects
 
     def filter_local_time(
-        self, local_database_path=False, time=None, round_to=0, time_range=None
+        self, local_database_path=False, time=None, round_to=0,
+            time_range=None
     ):
-        """Function that returns HIRISE image object filtered 
+        """Function that returns HIRISE image object filtered
         based on local time entered by the user"""
         # Read from the database
 
@@ -206,7 +207,7 @@ class ImageClient:
         return Hirise_img_objects
 
     def filter_mission_phase(self, mission_phase, local_database_path=False):
-        """Function that returns HIRISE image object filtered 
+        """Function that returns HIRISE image object filtered
         based on mission phase(s) entered by the user"""
 
         # Read from the database
@@ -231,7 +232,7 @@ class ImageClient:
         return Hirise_img_objects
 
     def filter_orbital_range(self, orbital_range, local_database_path=False):
-        """Function that returns HIRISE image object filtered 
+        """Function that returns HIRISE image object filtered
         based on orbital range entered by the user"""
         # Read from the database
 
@@ -254,9 +255,9 @@ class ImageClient:
 
         return Hirise_img_objects
 
-    # ----------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
     # Download Images and Reloads Local Database
-    # ----------------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
     def reload_database(
         self,
         mission_phases,
@@ -264,7 +265,7 @@ class ImageClient:
         append=True,
         download_batch_size=None,
     ):
-        """Function that webscrapes and downloads the metadata 
+        """Function that webscrapes and downloads the metadata
         into csv for the config files"""
 
         cols = [
@@ -319,7 +320,8 @@ class ImageClient:
             mission_phases = [mission_phases]
         elif all(
             isinstance(item, str) for item in mission_phases
-        ):  # check iterable for stringness of all items. Will raise TypeError if item is not iterable
+        ):  # check iterable for stringness of all items. Will raise TypeError
+            # if item is not iterable
             pass
         else:
             raise TypeError
@@ -332,7 +334,8 @@ class ImageClient:
 
         orbital_range_list = []
 
-        # other_parameters_list_of_lists = [scaling_factor_list, offset_list, wavelength_list]
+        # other_parameters_list_of_lists = [scaling_factor_list, offset_list,
+        # wavelength_list]
 
         for mission_phase in tqdm(mission_phases):
 
@@ -623,8 +626,9 @@ class ImageClient:
     def download_random_images(
         self, fol_path, image_count=1, local_database_path=False
     ):
-        """Function that downloads random HIRISE images from the 
-        local or config database based on number of images entered by the user"""
+        """Function that downloads random HIRISE images from the
+        local or config database based on number of images entered by the
+         user"""
         if local_database_path:
             hirise_df = pd.read_csv(local_database_path)
         else:
@@ -659,7 +663,8 @@ class ImageClient:
             science_themes = [science_themes]
         elif all(
             isinstance(item, str) for item in science_themes
-        ):  # check iterable for stringness of all items. Will raise TypeError if item is not iterable
+        ):  # check iterable for stringness of all items. Will raise TypeError
+            # if item is not iterable
             pass
         else:
             raise TypeError
@@ -694,7 +699,11 @@ class ImageClient:
 
                 connection.post(login_url, data=payload)
 
-                post_url = f"https://www.uahirise.org/hiwish/search?cenLat=0.0&latRange=0.0&cenLon=0.0&lonRange=0.0&text=&word=on&sd=on&theme1={science_theme_list.get(theme)}&username=&size=100000"
+                post_url = f"https://www.uahirise.org/hiwish/search?cenLat=" \
+                           f"0.0&latRange=0.0&cenLon=0.0&lonRange=0.0&text=&" \
+                           f"word=on&sd=on&" \
+                           f"theme1={science_theme_list.get(theme)}&" \
+                           f"username=&size=100000"
                 req2 = connection.get(post_url)
                 soup = BeautifulSoup(req2.text, "html.parser")
                 all_tables = soup.find_all("table")
@@ -754,7 +763,7 @@ class ImageClient:
     def filter_science_theme(
         self, science_theme, image_count=15, local_database_path=False
     ):
-        """Function that returns HIRISE image object filtered 
+        """Function that returns HIRISE image object filtered
         based on  science theme entered by the user"""
         cols = ["FILE_NAME", "SCIENCE_THEME"]
         if local_database_path:
@@ -785,7 +794,7 @@ class ImageClient:
         user_name="niranjana",
         password="B2bcTFp!5AtEAs5",
     ):
-        """Function that returns HIRISE image object filtered 
+        """Function that returns HIRISE image object filtered
         based on title of the image entered by the user"""
         login_url = "https://www.uahirise.org/hiwish/login"
         payload = {"username": user_name, "password": password}
@@ -798,7 +807,10 @@ class ImageClient:
                 CSV_FILE_PATH = "../HIRISE_api/hirise/hirise_data.csv"
                 hirise_df = pd.read_csv(CSV_FILE_PATH)
 
-            post_url = f"https://www.uahirise.org/hiwish/search?cenLat=0.0&latRange=0.0&cenLon=0.0&lonRange=0.0&text={title_keywords}&word=on&sd=on&username=&size=100000"
+            post_url = f"https://www.uahirise.org/hiwish/search?" \
+                       f"cenLat=0.0&latRange=0.0&cenLon=0.0&lonRange=0.0&" \
+                       f"text={title_keywords}&word=on&sd=on&username=&size=" \
+                       f"100000"
             req2 = connection.get(post_url)
             soup = BeautifulSoup(req2.text, "html.parser")
             all_tables = soup.find_all("table")
@@ -832,7 +844,7 @@ class ImageClient:
                     hirise_df["FILE_NAME"].str.contains(obs)
                 ]
                 string_fname = select_row["FILE_NAME"].tolist()
-                if string_fname != []:
+                if string_fname:
                     string_fname = string_fname[0]
 
                     observation_list.append(string_fname)

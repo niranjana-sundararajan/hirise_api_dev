@@ -18,36 +18,23 @@ import sys
 
 sys.modules["sklearn.externals.six"] = six
 
-# -----------------------------------------------------------------------------------------------------------------------------
-
-
-# -----------------------------------------------------------------------------------------------------------------------------
-
 
 # Define the current and parent directories and paths
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 
-# -----------------------------------------------------------------------------------------------------------------------------
 if __package__ is None or __package__ == "":
     # uses current directory visibility
     import utils
 else:
     from . import utils
 
-# -----------------------------------------------------------------------------------------------------------------------------
 
-
-def get_models(models_name_list_string, translated_models_list):
-    models = dict()
-    for name, mod in zip(models_name_list_string, translated_models_list):
-        models[name] = mod
-    return models
-
-
-# -----------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 #  WRAPPING CLASSES FOR INPUTS INTO ENSEMBLE MODELS
-# -----------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+
+
 class AgglomerativeClusteringWrapper(AgglomerativeClustering):
     def predict(self, X):
         return self.fit_predict(X)
@@ -68,10 +55,11 @@ class HDBSCANWrapper(HDBSCAN):
         return self.fit_predict(X)
 
 
-# -----------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 def get_stacking(discovery=False, all_models=True):
     """
-    Function that stacks specified models together as an input to the ensemble model.
+    Function that stacks specified models together as an input to the
+    ensemble model.
     """
     if discovery:
         affinity = AffinityPropagation(damping=0.7)
@@ -101,7 +89,7 @@ def get_stacking(discovery=False, all_models=True):
     return model
 
 
-# -----------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 def get_models(discovery=False):
     """
     Function that defines specified models as an input to the ensemble model.
@@ -125,7 +113,7 @@ def get_models(discovery=False):
     return models
 
 
-# -----------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 
 
 def evaluate_model(
@@ -152,9 +140,9 @@ def evaluate_model(
             == transfer_learning_model
         ]
 
-        translated_results = utils.translate_labels(
+        print(utils.translate_labels(
             translation_list=list(translation_values), model_results=model
-        )
+        ))
 
     scores = cross_val_score(
         model,
@@ -171,7 +159,6 @@ def evaluate_model(
 def ensemble_model(
     encoded_data,
     labels,
-    models,
     translation_dataframe,
     transfer_learning_model=None,
     dim_reduction_technique=None,
@@ -191,7 +178,6 @@ def ensemble_model(
     results, names = list(), list()
     for X_test in X_test_list[3:]:
         for name, model in models.items():
-            # print(X_test.shape, y_test.shape)
             scores = evaluate_model(
                 model=model,
                 X=X_test,

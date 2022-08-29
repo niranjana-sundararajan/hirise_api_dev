@@ -30,7 +30,8 @@ else:
 
 
 class DataPreparation:
-    """Class that allows for data preparation as part of the preprocessing of the hirise images."""
+    """Class that allows for data preparation as part of the preprocessing of
+    the hirise images."""
 
     def remove_background(self, file_name):
         src = cv2.imread(file_name, 1)
@@ -45,7 +46,7 @@ class DataPreparation:
             cv2.imwrite(file_name, dst)
 
     def resize_image(
-        self, folder_path, resized_images_folder_path, pixel_length_cm=250
+            self, folder_path, resized_images_folder_path, pixel_length_cm=250
     ):
         # Reduction factor based on NASA's decription of the HIRISE image
         reduce_factor = 25 / pixel_length_cm
@@ -56,7 +57,8 @@ class DataPreparation:
         for img in tqdm(imgfiles):
             img_list.append(Image.open(img))
 
-        # If folder path is present, change path to folder path, else create folder path
+        # If folder path is present, change path to folder path, else create
+        # folder path
         if os.path.isdir(resized_images_folder_path):
             os.chdir(resized_images_folder_path)
         else:
@@ -77,15 +79,16 @@ class DataPreparation:
                 pass
 
     def tile_images(
-        self,
-        folder_path,
-        image_directory,
-        image_size_pixels,
-        resized=True,
-        remove_background=True,
+            self,
+            folder_path,
+            image_directory,
+            image_size_pixels,
+            resized=True,
+            remove_background=True,
     ):
         """
-        Preprocessing function that tiles large images based on the size specified by the user
+        Preprocessing function that tiles large images based on the size
+        specified by the user
         """
 
         # Check if the files are resizedor in the original format
@@ -99,29 +102,31 @@ class DataPreparation:
         for img in imgfiles:
             img_list.append(Image.open(img))
 
-        # If folder path is present, change path to folder path, else create folder path
+        # If folder path is present, change path to folder path, else create
+        # folder path
         if os.path.isdir(image_directory):
             os.chdir(image_directory)
         else:
             os.makedirs(image_directory)
             os.chdir(image_directory)
 
-        # For each image, check size and tile acordingly
+        # For each image, check size and tile accordingly
         for img, name in tqdm(zip(img_list, imgfiles)):
             try:
                 im = np.asarray(img)
                 for r in range(0, math.ceil(im.shape[0]), image_size_pixels):
                     for c in range(
-                        0, math.ceil(im.shape[1]), image_size_pixels
+                            0, math.ceil(im.shape[1]), image_size_pixels
                     ):
                         f_name = (
-                            name.split("/")[-1].split(".")[0] + f"_{r}_{c}.jpg"
+                                name.split("/")[-1].split(".")[
+                                    0] + f"_{r}_{c}.jpg"
                         )
                         cv2.imwrite(
                             str(f_name),
                             im[
-                                r : r + image_size_pixels,
-                                c : c + image_size_pixels,
+                                r: r + image_size_pixels,
+                                c: c + image_size_pixels,
                                 :,
                             ],
                         )
@@ -133,7 +138,7 @@ class DataPreparation:
                 pass
 
     def convert_to_grayscale(
-        self, folder_path, image_directory, remove_background=True
+            self, folder_path, image_directory, remove_background=True
     ):
         """
         Preprocessing function that converts images into grayscale images
@@ -162,10 +167,11 @@ class DataPreparation:
                 DataPreparation.remove_background(self, file_name=f_name)
 
     def remove_image_with_empty_pixels(
-        self, folder_path, max_percentage_empty_space=20
+            self, folder_path, max_percentage_empty_space=20
     ):
         """
-        Preprocessing function that removes tiled images with a specified percentage of empty pixels, to avoid noise in the dataset
+        Preprocessing function that removes tiled images with a specified
+        percentage of empty pixels, to avoid noise in the dataset
         """
         # Get file names
         imgfiles = glob(f"{folder_path}/*.jpg")
@@ -176,12 +182,12 @@ class DataPreparation:
         else:
             print("ERROR!")
 
-        # Extract and check each image in the folder for their % emoty space
+        # Extract and check each image in the folder for their % empty space
         for f_name in tqdm(imgfiles):
             empty = 0
             try:
                 img = Image.open(f_name.split("\\")[-1])
-            except:
+            except IOError:
                 img = Image.open(f_name.split("/")[-1])
 
             width, height = img.width, img.height
@@ -195,12 +201,13 @@ class DataPreparation:
             if percent >= max_percentage_empty_space:
                 try:
                     os.remove(f_name.split("\\")[1])
-                except:
+                except IOError:
                     os.remove(f_name)
 
     def get_image_dataset(self, f_path, transform_data=None):
         """
-        Function that returns the pytorch Image Loader dataset for images in a specified folder path
+        Function that returns the pytorch Image Loader dataset for images in a
+        specified folder path
         """
         if not transform_data:
             transform_data = transforms.Compose([transforms.ToTensor()])
@@ -212,7 +219,8 @@ class DataPreparation:
 
     def get_train_test_val_tensors(self, dataset):
         """
-        Function that returns the pytorch tensors for train, test and validation data with dataset a Imageloader dataset as the input
+        Function that returns the pytorch tensors for train, test and
+        validation data with dataset a Imageloader dataset as the input
         """
 
         # Split the dataset into training and validation
@@ -222,7 +230,7 @@ class DataPreparation:
             [math.floor(m - m * 0.2), math.ceil(m * 0.2)],
         )
 
-        # Training Data -------------------------------------------------------------------------------------
+        # Training Data
         # Empty lists to store the training data
         train_list = []
         # Append from the MedicalMNIST Object the training target and labels
@@ -276,12 +284,14 @@ class DataPreparation:
         return dataset_tensor
 
     def get_train_test_val_dataloader(
-        self, train_data, test_data, val_data, b_size=128
+            self, train_data, test_data, val_data, b_size=128
     ):
         """
-        Function that returns the pytorch dataloader for train, test and validation data with batch size as the input parameter
+        Function that returns the pytorch dataloader for train, test and
+        validation data with batch size as the input parameter
         """
-        # Create TorchTensor Datasets containing training_data, testing_data, validation_data
+        # Create TorchTensor Datasets containing training_data, testing_data,
+        # validation_data
         training_data = TensorDataset(train_data, train_data.long())
         validation_data = TensorDataset(val_data, val_data.long())
         testing_data = TensorDataset(test_data, test_data.long())
@@ -319,7 +329,8 @@ class DataPreparation:
                     axarr[i][j].imshow(sample.permute(1, 2, 0), cmap="gray")
                     # Get the classes of the target data
                 target_name = dataset.dataset.targets[target]
-                # Label each image with the target name and the class it belongs to
+                # Label each image with the target name and the class it
+                # belongs to
                 axarr[i][j].set_title("%s (%i)" % (target_name, target))
         # Define the grid layout and padding
 

@@ -43,9 +43,11 @@ def display_all_images(
     pca=False,
 ):
     """
-    Function to display all the image in the folder in a flat rasterfied format.
+    Function to display all the image in the folder in a flat rasterfied
+    format.
     The user may specify the dimension reduction used, default is t-SNE.
-    The user must input the grid_rows, grid_columns, tile_width and tile_height of the images and the samples to be diplayed.
+    The user must input the grid_rows, grid_columns, tile_width and
+    tile_height  of the images and the samples to be diplayed.
     The grid_rows and coulumns must be specified such that
     total images <= grid_rows * grid_columns.
     The user may also choose to save the generated image in the current folder.
@@ -128,7 +130,8 @@ def display_image_distributions(
     image_file_path, dim_red_results, width=3000, height=3000, max_dim=100
 ):
     """
-    Function to display all the image in the folder as images on a distributed map using TSNE,UMAP or PCA as the preprocessing function
+    Function to display all the image in the folder as images on a
+    distributed  map using TSNE,UMAP or PCA as the preprocessing function
     """
     # Create list of PIL images
     image_list = create_image_list(file_path=image_file_path)
@@ -157,7 +160,8 @@ def display_image_distributions(
 
 def create_image_list(file_path, transform=None):
     """
-    Function that creates a list of all the images in the specified folder in a PIL format
+    Function that creates a list of all the images in the specified folder
+    in  a PIL format
     """
     # Generate the dataset
     full_dataset = Image_Loader.generate_dataset(
@@ -186,7 +190,8 @@ def show_cluster_images(
     test=False,
 ):
     """
-    Prints the image in a specified cluster, in the form of a grid with rows and columns specified by the user
+    Prints the image in a specified cluster, in the form of a grid with rows
+    and columns specified by the user
     """
     # Create list of PIL images
     image_list = create_image_list(file_path=image_file_path)
@@ -225,7 +230,8 @@ def show_cluster_images(
                     # Get the classes of the target data
                     target_name = cluster_df["cluster"][idx]
 
-                    # Label each image with the target name and the class it belongs to
+                    # Label each image with the target name and the class it
+                    # belongs to
                     idx = idx + 1
                     axarr[i][j].set_xticks([])
                     axarr[i][j].set_yticks([])
@@ -258,7 +264,8 @@ def show_cluster_images(
                     # Get the classes of the target data
                 target_name = cluster_df["cluster"][idx]
 
-                # Label each image with the target name and the class it belongs to
+                # Label each image with the target name and the class it
+                # belongs to
                 axarr[i][j].set_xticks([])
                 axarr[i][j].set_yticks([])
 
@@ -266,7 +273,7 @@ def show_cluster_images(
     fig.tight_layout(pad=1)
     fig.subplots_adjust(top=0.95)
 
-    # Add labels if the datsaet is a test(labelled) dataset
+    # Add labels if the dataset is a test(labelled) dataset
     if test:
         dict_clust = Image_Loader.show_classes(
             folder_path=image_file_path, transform=None

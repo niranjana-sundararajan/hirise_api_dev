@@ -19,16 +19,18 @@ parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 
 
 class HiriseImageDataset(Dataset):
-    """Hirise Image Dataset Class that initialize the pytorch ImageLoader Dataset
-    with the folder images to return and image and associated folder name(label)
+    """Hirise Image Dataset Class that initialize the pytorch ImageLoader
+    Dataset
+    with the folder images to return and image and associated folder  name(
+    label)
     """
 
     def __init__(self, path_to_images, transform=None):
-        # ------------------------------------------------------------------------------
+        # -------------------------------------------------------------------
         # path_to_images: where you put the image dataset
         # transform:  data transform
         # img_size: resize all images to a standard size
-        # ------------------------------------------------------------------------------
+        # -------------------------------------------------------------------
 
         # Load all the images and their labels
         self.dataset = datasets.ImageFolder(
@@ -37,9 +39,9 @@ class HiriseImageDataset(Dataset):
         self.len = len(self.dataset.imgs)
         self.path_to_images = path_to_images
 
-        # ------------------------------------------------------------------------------
+        # -------------------------------------------------------------------
         # Split the data into train and test data 80 : 20
-        # ------------------------------------------------------------------------------
+        # -------------------------------------------------------------------
         # Calculate the lengths of the vectors
         lengths = [
             int(np.ceil(len(self.dataset) * 0.8)),
@@ -67,7 +69,8 @@ class HiriseImageDataset(Dataset):
 
 def generate_dataset(folder_path, transform=None):
     """
-    Function that generated the HIRISE Dataset given a folderpath of HIRISE Images
+    Function that generated the HIRISE Dataset given a folderpath of HIRISE
+    Images
     """
     # Define the transformation function for the dataset
     if not transform:
@@ -91,7 +94,8 @@ def generate_dataset(folder_path, transform=None):
 
 def initialize_encoder_decoder(latent_dimensions=2000):
     """
-    Fuction that initialized the encoder and decoder depeining on the latent dimensions specified by the user.
+    Fuction that initialized the encoder and decoder depeining on the latent
+     dimensions specified by the user.
     Default is 2000 dimenions.
     """
     # Initialzie the encoder and decoder from the Encoding Module
@@ -115,7 +119,8 @@ def initialize_encoder_decoder(latent_dimensions=2000):
 
 def generate_dataloaders(folder_path, transform=None):
     """
-    Function that generates the dataloaders for a HIRISE dataset, given folder path specified by the user
+    Function that generates the dataloaders for a HIRISE dataset, given folder
+    path specified by the user
     """
 
     # Initialize the data preparation class
@@ -149,7 +154,8 @@ def show_encoder_decoder_image_sizes(
     folder_path, device="cpu", transform=None
 ):
     """
-    Function that returns the input and output image sizes of images that have been through the autoencoding process
+    Function that returns the input and output image sizes of images that have
+    been through the autoencoding process
     """
     # Generate the ImageLoader dataset
     datasets = generate_dataset(folder_path=folder_path, transform=transform)
@@ -157,7 +163,8 @@ def show_encoder_decoder_image_sizes(
     # Select first image from the dataset
     img, _ = datasets.train_dataset[0]
 
-    # unsqueeze from the dataloader "batch" format(Add the batch dimension in the first axis)
+    # unsqueeze from the dataloader "batch" format(Add the batch dimension
+    # in  the first axis)
     img = img.unsqueeze(0).to(device)
 
     # Print the original shape
@@ -173,7 +180,8 @@ def show_encoder_decoder_image_sizes(
 
 def show_classes(folder_path, transform=None, dict_values=True):
     """
-    Fucntion that shows all classes defined by the user though the Image Folders using the Imgae Folder dataset
+    Function that shows all classes defined by the user though the Image
+    Folders using the Image Folder dataset
     """
     # Generate the ImageLoader dataset
     datasets = generate_dataset(folder_path=folder_path, transform=transform)

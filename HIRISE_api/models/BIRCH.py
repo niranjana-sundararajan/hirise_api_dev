@@ -15,8 +15,10 @@ def BIRCH_analysis(
     verbose=False,
 ):
     """
-    Function that uses as input the encoded image samples and clusters the data using affinity propogation.
-    The user must specify the damping factor, which is the tuning parameter for affinity propogation clustering.
+    Function that uses as input the encoded image samples and clusters the
+    data using affinity propogation.
+    The user must specify the damping factor, which is the tuning parameter
+    for affinity propogation clustering.
     """
     # Standardize the encoded samples
     X = StandardScaler().fit_transform(encoded_samples)

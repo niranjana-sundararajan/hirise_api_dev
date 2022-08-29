@@ -13,8 +13,10 @@ def kmeans_analysis(
     plot=True,
 ):
     """
-    Function that uses as input the encoded image samples and clusters the data using K Means clustering of applications with noise.
-    The user must specify the number of clusters and the algorithms chooses a random seed to instantiate the clustering.
+    Function that uses as input the encoded image samples and clusters the
+    data using K Means clustering of applications with noise.
+    The user must specify the number of clusters and the algorithms chooses
+    a random seed to instantiate the clustering.
     """
     # Standardize the encoded samples
     X = StandardScaler().fit_transform(encoded_samples)

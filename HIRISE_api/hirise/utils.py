@@ -1,4 +1,3 @@
-import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 
@@ -60,7 +59,8 @@ def timing_parameters_list():
 
 def other_parameters_list():
     """
-    Function that returns scaling factor, offset, center filter wavelength parameters list
+    Function that returns scaling factor, offset, center filter wavelength
+    parameters list
     """
     return ["SCALING_FACTOR", "OFFSET", "CENTER_FILTER_WAVELENGTH"]
 
@@ -162,7 +162,8 @@ def validate_append_float_data(param, list_of_params):
 
 def append_float_data_without_strip(param, list_of_params):
     """
-    Function that validates floating point data without stripping the last characters
+    Function that validates floating point data without stripping the last
+    characters
     """
     if param:
         list_of_params.append(float(param))

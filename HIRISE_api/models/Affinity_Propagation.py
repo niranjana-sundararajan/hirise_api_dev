@@ -1,6 +1,5 @@
 from numpy import unique
 from numpy import where
-from matplotlib import pyplot
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import AffinityPropagation
 
@@ -11,8 +10,10 @@ def affinity_propagation_analysis(
     encoded_samples, damping, plot=True, fig_size=(7, 7), verbose=False
 ):
     """
-    Function that uses as input the encoded image samples and clusters the data using affinity propogation.
-    The user must specify the damping factor, which is the tuning parameter for affinity propogation clustering.
+    Function that uses as input the encoded image samples and clusters the
+    data using affinity propogation.
+    The user must specify the damping factor, which is the tuning parameter
+    for affinity propogation clustering.
     """
 
     # Standardize the encoded samples

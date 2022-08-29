@@ -61,7 +61,6 @@ def test_umap_dimension_reduction():
     Test if output of UMAP analysis is as expected
     """
     encoded_samples = utils.read_encoded_csv(ENCODED_SAMPLES_CSV)
-    labels = utils.read_encoded_csv(LABELS_CSV)
     umap_dimension_reduction = Dimension_Reduction.UMAP_analysis(
         encoded_samples, plot=False
     )

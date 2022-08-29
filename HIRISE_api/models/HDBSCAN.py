@@ -15,8 +15,11 @@ def HDBSCAN_analysis(
     fig_size=(8, 5),
 ):
     """
-    Function that uses as input the encoded image samples and clusters the data using Hierarchical Density-based spatial clustering of applications with noise.
-    The user must specify only the minimum samples, which is the tuning parameters for HDBSCAN.
+    Function that uses as input the encoded image samples and clusters the
+    data using Hierarchical Density-based spatial clustering of applications
+     with noise.
+    The user must specify only the minimum samples, which is the tuning
+     parameters for HDBSCAN.
     """
     # Standardize the encoded samples
     X = StandardScaler().fit_transform(encoded_samples)
@@ -35,7 +38,8 @@ def HDBSCAN_analysis(
     # Display additional information, if specified
     if verbose:
         print(
-            f"For {minimum_samples} min number of samples , the number of clusters found : ",
+            f"For {minimum_samples} min number of samples , the number of "
+            f"clusters found : ",
             len(number_of_clusters),
         )
 
@@ -43,7 +47,7 @@ def HDBSCAN_analysis(
     if plot:
         clus_labels = {f"Clus. {i}" for i in number_of_clusters}
         plt.figure(figsize=fig_size)
-        ax = sns.scatterplot(
+        sns.scatterplot(
             x=X[:, 0], y=X[:, 1], hue=HDBSCAN_predictions, palette="Accent"
         )
         plt.title("Hierarchical Density Based Clustering (HDBSCAN)")

@@ -1,4 +1,3 @@
-import black
 import numpy as np
 
 import models
@@ -9,10 +8,8 @@ from models import (
     DBSCAN,
     HDBSCAN,
     OPTICS,
-    Mean_Shift,
-    Ensemble_Models,
+    Mean_Shift
 )
-import pandas as pd
 
 ENCODED_SAMPLES_CSV = "./encoded_samples.csv"
 LABELS_CSV = "./label_list.csv"
@@ -36,9 +33,10 @@ def test_clustering_results():
             encoded_samples, clusters=14, plot=False, fig_size=(10, 10)
         )
     )
-    affinity_clustering = Affinity_Propagation.affinity_propagation_analysis(
-        encoded_samples, damping=0.7, plot=False, fig_size=(15, 10)
-    )
+    affinity_clustering = \
+        Affinity_Propagation.affinity_propagation_analysis(
+            encoded_samples, damping=0.7, plot=False, fig_size=(15, 10)
+        )
     dbscan_clustering = DBSCAN.DBSCAN_analysis(
         encoded_samples,
         true_labels=labels.label,
@@ -74,7 +72,8 @@ def test_clustering_results():
 
 def test_translate_labels():
     """
-    Test if label translation function for classification metrics translated user defined labels as expected
+    Test if label translation function for classification metrics translated
+    user defined labels as expected
     """
     # Define random translation values
     model_results = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]

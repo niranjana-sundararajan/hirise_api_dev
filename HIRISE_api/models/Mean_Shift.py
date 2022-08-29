@@ -10,7 +10,8 @@ def mean_shift_analysis(
     encoded_samples, plot=True, verbose=False, fig_size=(10, 7)
 ):
     """
-    Function that uses as input the encoded image samples and clusters the data using Mean Shift Clustering Method.
+    Function that uses as input the encoded image samples and clusters the
+    data using Mean Shift Clustering Method.
     There are no tuning parameters in the mean-shift method.
     """
     # Standardize the encoded samples
@@ -38,8 +39,6 @@ def mean_shift_analysis(
             # get data points that fall in this cluster
             index = where(mean_result == mean_cluster)
             # make the plot
-            len_colors = len(X)
-            colours = mean_result[0:len_colors]
             plt.scatter(X[index, 0], X[index, 1])
             plt.title("Mean Shift Analysis")
             plt.xlabel("Component 1")

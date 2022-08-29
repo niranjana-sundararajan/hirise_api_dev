@@ -15,8 +15,10 @@ def OPTICS_analysis(
     fig_size=(10, 7),
 ):
     """
-    Function that uses as input the encoded image samples and clusters the data using  Ordering Points To Identify Cluster Structure Method.
-    The user must specify the eps and minimum number of samples which are the tuning parameter for OPTICS.
+    Function that uses as input the encoded image samples and clusters the
+    data using  Ordering Points To Identify Cluster Structure Method.
+    The user must specify the eps and minimum number of samples which are
+    the  tuning parameter for OPTICS.
     """
     # Standardize the encoded samples
     X = StandardScaler().fit_transform(dataframe)
@@ -41,7 +43,8 @@ def OPTICS_analysis(
             # make the plot
             plt.scatter(X[index, 0], X[index, 1])
             plt.title(
-                "Ordering points to identify the clustering structure (OPTICS) Analysis"
+                "Ordering points to identify the clustering structure  ("
+                "OPTICS) Analysis"
             )
             plt.xlabel("Component 1")
             plt.ylabel("Component 2")

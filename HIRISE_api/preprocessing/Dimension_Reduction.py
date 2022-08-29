@@ -27,7 +27,10 @@ def PCA_analysis(
     fig_size=(5, 5),
 ):
     """
-    The PCA analysis allows the user to understand diffrent aspects of the PCA mehod. You can choose to display the explained variance, the cumulative explained variance based on the chosen number of components.
+    The PCA analysis allows the user to understand diffrent aspects of the
+    PCA  mehod. You can choose to display the explained variance,
+    the  cumulative explained variance based on the chosen number of
+    components.
     Further, the user can choose to plot the 2D and 3D visualisations.
     """
 
@@ -45,7 +48,8 @@ def PCA_analysis(
             linestyle="--",
         )
         print(
-            f"The Cumulative explained variance with {components} is given by: ",
+            f"The Cumulative explained variance with {components} is  given "
+            f"by: ",
             pca.explained_variance_ratio_.cumsum()[-1] * 100,
             "%",
         )
@@ -101,11 +105,13 @@ def TSNE_analysis(
     encoded_samples, labels, plot=True, plot_3d=False, fig_size=(12, 10)
 ):
     """
-    The T-SNE analysis allows the user to understand diffrent aspects of the TSNE method.
+    The T-SNE analysis allows the user to understand diffrent aspects of the
+    TSNE method.
      The user can choose to plot the 2D and 3D visualisations.
     """
 
-    # If the user chooses 3 components, the 3D plot and its corresponding model is executed
+    # If the user chooses 3 components, the 3D plot and its corresponding
+    # model is executed
     if plot_3d:
         tsne = TSNE(n_components=3)
         tsne_results = tsne.fit_transform(encoded_samples)
@@ -154,9 +160,12 @@ def UMAP_analysis(
     fig_size=(10, 10),
 ):
     """
-    The UMAP analysis allows the user to understand diffrent aspects of the UMAP method.
-    The user can choose either 2 or 3 components and the number of neighbours, training epochs, learning rate.
-    The selected values are based on analysis done for the research project for this specific dataset.
+    The UMAP analysis allows the user to understand diffrent aspects of the
+    UMAP method.
+    The user can choose either 2 or 3 components and the number of neighbours,
+    training epochs, learning rate.
+    The selected values are based on analysis done for the research project for
+    this specific dataset.
     The user can choose to plot the visualisations.
     """
     # Configure UMAP hyperparameters
