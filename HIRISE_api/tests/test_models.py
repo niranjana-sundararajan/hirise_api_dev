@@ -1,6 +1,9 @@
 import numpy as np
 import pkg_resources
-from models import KMeans, BIRCH, Agglomerative_Clustering, metrics, utils as mUtils
+from models import (KMeans, BIRCH, 
+Agglomerative_Clustering, metrics,
+utils as mUtils
+)
 from preprocessing import utils
 from models import (
     Affinity_Propagation,
@@ -67,14 +70,14 @@ def test_clustering_results():
     )
 
     # Assert if valid outputs are produced of finite length
-    assert KMeans_clustering
-    assert birch_clustering
-    assert agg_clustering
-    assert affinity_clustering
-    assert dbscan_clustering
-    assert hdbscan_clustering
-    assert mean_shift_clustering
-    assert optics_clustering
+    assert KMeans_clustering.all() != None
+    assert birch_clustering.all() != None
+    assert agg_clustering.all() != None
+    assert affinity_clustering.all() != None
+    assert dbscan_clustering.all() != None
+    assert hdbscan_clustering.all() != None
+    assert mean_shift_clustering.all() != None
+    assert optics_clustering.all() != None
 
 
 def test_translate_labels():
