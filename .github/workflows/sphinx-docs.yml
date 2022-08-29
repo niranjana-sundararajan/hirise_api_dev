@@ -58,10 +58,10 @@ jobs:
           git status
           git config user.name github-actions
           git config user.email github-actions@github.com
+          git pull
           git add ./docs/pdf/hirise_api.pdf
           git add ./docs/html/
           git commit -m "Updated hirise documentation"
-          git pull --rebase # ensure updates from other workflows incorporated
 
       # Push changes to current remote git repository
       - name: Push changes

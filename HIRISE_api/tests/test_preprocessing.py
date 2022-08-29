@@ -1,11 +1,20 @@
 import pandas as pd
-
+import pkg_resources
 from preprocessing import Encoding, Dimension_Reduction, utils
 import numpy as np
 import torch
 
-ENCODED_SAMPLES_CSV = "./encoded_samples.csv"
-LABELS_CSV = "./label_list.csv"
+if __package__ is None or __package__ == "":
+    # uses current directory visibility
+    ENCODED_SAMPLES_CSV = "./encoded_samples.csv"
+    LABELS_CSV = "./label_list.csv"
+else:
+    ENCODED_SAMPLES_CSV = pkg_resources.resource_filename(
+        "tests", "encoded_samples.csv"
+    )
+    LABELS_CSV = pkg_resources.resource_filename(
+        "tests", "label_list.csv"
+    )
 
 
 def test_autoencoder():

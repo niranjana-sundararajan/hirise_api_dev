@@ -1,7 +1,6 @@
 import numpy as np
-
-import models
-from models import KMeans, BIRCH, Agglomerative_Clustering, metrics
+import pkg_resources
+from models import KMeans, BIRCH, Agglomerative_Clustering, metrics, utils as mUtils
 from preprocessing import utils
 from models import (
     Affinity_Propagation,
@@ -10,9 +9,17 @@ from models import (
     OPTICS,
     Mean_Shift
 )
-
-ENCODED_SAMPLES_CSV = "./encoded_samples.csv"
-LABELS_CSV = "./label_list.csv"
+if __package__ is None or __package__ == "":
+    # uses current directory visibility
+    ENCODED_SAMPLES_CSV = "./encoded_samples.csv"
+    LABELS_CSV = "./label_list.csv"
+else:
+    ENCODED_SAMPLES_CSV = pkg_resources.resource_filename(
+        "tests", "encoded_samples.csv"
+    )
+    LABELS_CSV = pkg_resources.resource_filename(
+        "tests", "label_list.csv"
+    )
 
 
 def test_clustering_results():
@@ -80,7 +87,7 @@ def test_translate_labels():
     translation_list = [8, 7, 5, 11, 9, 2, 10, 3, 4, 1, 6, 13, 12]
 
     # Calculated translated dataframe
-    translated_outputs = models.utils.translate_labels(
+    translated_outputs = mUtils.translate_labels(
         translation_list, model_results
     )
 
