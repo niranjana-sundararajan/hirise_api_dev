@@ -31,12 +31,10 @@ jobs:
       # Install dependencies, specifically LaTeX, Sphinx and the module being documented
       - name: Install dependencies
         run: |
-          echo "$(pwd)"
           sudo apt-get update -y 
           sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
           pip install --upgrade pip # make sure accessing from latest PyPi
           pip install -r requirements.txt # make sure all packages installed
-          echo "Current directory is: $(pwd)"
           pip install -e . # install module
           pip install sphinx
    
@@ -52,16 +50,13 @@ jobs:
       # Commit changes to local git repository
       - name: commit files
         run: |
-          echo "Current directory is: $(pwd)"
-          echo "Generated latex files: "
-          ls
           git status
           git config user.name github-actions
           git config user.email github-actions@github.com
           git pull
           git add ./docs/pdf/hirise_api.pdf
           git add ./docs/html/
-          git commit -m "Updated hirise documentation"
+          git commit -m "Updated Hirise api documentation"
 
       # Push changes to current remote git repository
       - name: Push changes

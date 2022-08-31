@@ -1,11 +1,14 @@
 from setuptools import setup, find_packages
 
 PCKGNAME = "HIRISEimgs"
-DESCRIPTION = 'HIRISE Image data and information'
-
+DESCRIPTION = 'HIRISE Image Data, Information, Preprocessing and Models'
+LONG_DESCRIPTION = 'Package created to support thesis : "Deep Learning \
+    Algorithms Applied to Surface Mapping of Mars" written in part for \
+        completion of Masters degree at Imperial College London'
 # Setting up
 setup(
     name=PCKGNAME,
+    version="1.0.0",
     python_requires='>3.5.2',
     author="Niranjana Sundararajan",
     author_email="<niranjanasundararajan@gmail.com>",
