@@ -48,6 +48,10 @@ def test_database_exists():
 
 
 def test_get_images():
+    """
+    Function that tests if getting an image by the file
+    name identifier works as expected.
+    """
     hirise_image_client = Image_Client.ImageClient()
     images_result = hirise_image_client.get_images(
         file_name="PSP_006281_0965_COLOR.IMG"
@@ -58,8 +62,8 @@ def test_get_images():
 
 def test_filter_center_latlon():
     """
-    Test if filtering by latititude and longitude
-    works ase expected.
+    Function to test if filtering by latititude and longitude
+    works as expected.
     """
     hirise_image_client = Image_Client.ImageClient()
     images_result = hirise_image_client.filter_center_latlon(

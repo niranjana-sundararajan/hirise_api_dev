@@ -3,7 +3,8 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.sep.join((os.curdir, '..'))))
 
-project = 'HIRISE_api'
+project = 'HIRISE API Documentation'
+author = ' '
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.napoleon',
               'sphinx.ext.autosummary']

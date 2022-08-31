@@ -36,21 +36,37 @@ else:
 
 
 class AgglomerativeClusteringWrapper(AgglomerativeClustering):
+    """
+    Wrapper Class for Aggloerative Clustering to ensure correct
+    execution of Ensemble Model
+    """
     def predict(self, X):
         return self.fit_predict(X)
 
 
 class OpticsWrapper(OPTICS):
+    """
+    Wrapper Class for Optics to ensure correct
+    execution of Ensemble Model
+    """
     def predict(self, X):
         return self.fit_predict(X)
 
 
 class DBSCANWrapper(DBSCAN):
+    """
+    Wrapper Class for DBSCAN to ensure correct
+    execution of Ensemble Model
+    """
     def predict(self, X):
         return self.fit_predict(X)
 
 
 class HDBSCANWrapper(HDBSCAN):
+    """
+    Wrapper Class for HDBSCAN to ensure correct
+    execution of Ensemble Model
+    """
     def predict(self, X):
         return self.fit_predict(X)
 
@@ -167,6 +183,10 @@ def ensemble_model(
     plot=False,
     verbose=False,
 ):
+    """
+    Function that puts together all aspects of the ensemble model and generates
+    output metrics and box plots
+    """
     if isinstance(encoded_data, list):
         X_test_list = [StandardScaler().fit_transform(i) for i in encoded_data]
     else:
